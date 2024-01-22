@@ -57,27 +57,21 @@ async function saveCourse(req, res) {
     }
 }
 
-async function getCourses(req,res){
-    try{
+async function getCourses(req, res) {
+    try {
         const filter = {};
         let courses = await Course.find(filter);//.populate("parent_cat");
-        res.send(retrunResponse(200,courses,''));
-    }catch(error){
-        console.log("Error" + error); 
+        res.send(retrunResponse(200, courses, ''));
+    } catch (error) {
+        console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));
     }
 }
 
 async function getCourse(req, res) {
     try {
-        const userEmail = req.body.email;
-        // console.log(`User email = ${userEmail}`)
-        const filter = { "email": `${userEmail}` };
-        let userObject = null;
-
-        userObject = await User.findOne(filter)
-        // console.log(`User Object = ${JSON.stringify(userObject)}`)
-        res.send(retrunResponse(200, userObject, ""));
+        let courseObject = await Course.findById({"_id": req.params.id})
+        res.send(retrunResponse(200, courseObject, ""));
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));

@@ -6,6 +6,7 @@ const userSchema = new Schema({
     age: { type: String, required: true },
     language: { type: String, required: true },
     cover_image: { type: String },
+    link: { type: String },
     course_duration: { type: Number }, // How long the course will be running.
     session_duration: { type: Number }, // How long each session is.
     price: { type: Number },

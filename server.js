@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 
-// import categoryRouter from './routers/category.js'
+import coursesRouter from './routers/courses.js'
 // import productRouter from './routers/product.js'
 // import userRouter from './routers/user.js'
 // import listRouter from './routers/shoppingList.js'
@@ -11,7 +11,7 @@ import bodyParser from "body-parser";
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-// app.use("/categories", categoryRouter);
+app.use("/courses", coursesRouter);
 // app.use("/products", productRouter);
 // app.use("/users", userRouter);
 // app.use("/shoppingLists",listRouter);

@@ -7,7 +7,8 @@ mongoose.connect(`${process.env.DATABAE_URL}`);
 export default {
     saveCourse,
     getCourse,
-    getCourses
+    getCourses,
+    updateCourse
 }
 
 /**
@@ -29,6 +30,7 @@ async function saveCourse(req, res) {
     const courseTitle = req.body.title;
 
     try {
+        // case of new course
         if (await Course.count({ "title": courseTitle }) === 0) {
             // save new course
             const newCourse = new Course({
@@ -41,16 +43,31 @@ async function saveCourse(req, res) {
             const courseObj = await newCourse.save();
             res.send(retrunResponse(200, courseObj, ""));
         }
-        // else {
-        //     const lastLoggedInTime = new Date().getTime();
-        //     console.log(`Updated lastLoggedin time : ${lastLoggedInTime}`);
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
 
-        //     const userObj = await User.findOneAndUpdate({ "email": userEmail }, {
-        //         name: userName,
-        //         lastLoginTime: lastLoggedInTime
-        //     })
-        //     res.send(retrunResponse(200, userObj, ""));
-        // }
+async function updateCourse(req, res) {
+    try {
+        const courseObj = await Course.findOneAndUpdate({ "_id": req.params.id }, {
+            "title": req.body.title,
+            "age": req.body.age,
+            "language": req.body.language,
+            "cover_image": req.body.cover_image,
+            "course_duration": req.body.duration, // How long the course will be running.
+            "session_duration": req.body.session_duration, // How long each session is.
+            "price": req.body.price,
+            "type": req.body.type,// In-person or online
+            "prerequisite_courses": req.body.prerequisite_courses,
+            "description": req.body.description,
+            "course_subjects": req.body.course_subjects,
+            "course_skills": req.body.course_skills,
+            "lastLoginTime": new Date().getTime(),
+        })
+        await courseObj.save();
+        res.send(retrunResponse(200, courseObj, ""));
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));
@@ -70,7 +87,7 @@ async function getCourses(req, res) {
 
 async function getCourse(req, res) {
     try {
-        let courseObject = await Course.findById({"_id": req.params.id})
+        let courseObject = await Course.findById({ "_id": req.params.id })
         res.send(retrunResponse(200, courseObject, ""));
     } catch (error) {
         console.log("Error" + error);

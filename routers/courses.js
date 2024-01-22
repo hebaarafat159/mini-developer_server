@@ -8,6 +8,14 @@ userRouter.post('/add', async (req, res) => {
     await courseController.saveCourse(req, res);
 })
 
+userRouter.put('/:id', async (req, res) => {
+    await courseController.updateCourse(req, res);
+})
+
+userRouter.delete('/:id', async (req, res) => {
+    await courseController.saveCourse(req, res);
+})
+
 userRouter.get('/', async (req, res) => {
     courseController.getCourses(req, res);
 })

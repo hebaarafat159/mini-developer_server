@@ -5,6 +5,7 @@ import Parent from '../models/parentModel.js';
 mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
+    addParent,
     saveParent,
     getParent,
     updateParent,
@@ -27,8 +28,7 @@ function retrunResponse(status, body, message) {
     };
 }
 
-async function saveParent(req, res) {
-    const parentEmail = req.body.email;
+async function addParent(parentEmail) {
 
     try {
         // case of new parent
@@ -45,11 +45,25 @@ async function saveParent(req, res) {
                 lastLoginTime: new Date().getTime()
             })
             parentObj = await newParent.save();
-            res.send(retrunResponse(200, parentObj, ""));
+            // res.send(retrunResponse(200, parentObj, ""));
+            return parentObj
         } else {
             console.log(`Parent :  ${parentObj}`);
-            res.send(retrunResponse(200, parentObj, ""));
+            // res.send(retrunResponse(200, parentObj, ""));
+            return parentObj
         }
+    } catch (error) {
+        console.log("Error" + error);
+        // res.send(retrunResponse(error.code, null, error.name));
+        return null
+    }
+}
+async function saveParent(req, res) {
+    try {
+        // case of new parent
+        const parentObj = await addParent(req.body.email);
+        console.log(`Parent :  ${parentObj}`);
+        res.send(retrunResponse(200, parentObj, ""));
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));

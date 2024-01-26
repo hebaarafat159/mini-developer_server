@@ -2,26 +2,26 @@ import 'dotenv/config'
 import express from "express";
 import courseController from '../controllers/courseController.js'
 
-let userRouter = express.Router();
+let courseRouter = express.Router();
 
-userRouter.post('/add', async (req, res) => {
+courseRouter.post('/add', async (req, res) => {
     await courseController.saveCourse(req, res);
 })
 
-userRouter.put('/:id', async (req, res) => {
+courseRouter.put('/:id', async (req, res) => {
     await courseController.updateCourse(req, res);
 })
 
-userRouter.delete('/:id', async (req, res) => {
+courseRouter.delete('/:id', async (req, res) => {
     await courseController.saveCourse(req, res);
 })
 
-userRouter.get('/', async (req, res) => {
+courseRouter.get('/', async (req, res) => {
     courseController.getCourses(req, res);
 })
 
-userRouter.get('/:id', async (req, res) => {
+courseRouter.get('/:id', async (req, res) => {
     courseController.getCourse(req, res);
 })
 
-export default userRouter;
+export default courseRouter;

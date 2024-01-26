@@ -4,20 +4,20 @@ import cors from "cors";
 import bodyParser from "body-parser";
 
 import coursesRouter from './routers/courses.js'
-// import productRouter from './routers/product.js'
-// import userRouter from './routers/user.js'
-// import listRouter from './routers/shoppingList.js'
+import parentsRouter from './routers/parents.js'
+import studentsRouter from './routers/students.js'
+import classroomsRouter from './routers/classrooms.js'
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/courses", coursesRouter);
-// app.use("/products", productRouter);
-// app.use("/users", userRouter);
-// app.use("/shoppingLists",listRouter);
+app.use("/parents", parentsRouter);
+app.use("/students", studentsRouter);
+app.use("/classrooms", classroomsRouter);
 
 const port = process.env.PORT || 4000;
 
-app.listen(port, ()=>{
+app.listen(port, () => {
     console.log(`listening on port: ${port}`);
 })

@@ -28,12 +28,14 @@ function retrunResponse(status, body, message) {
     };
 }
 
-async function addParent(parentEmail) {
-
+async function addParent(req) {
+    const parentEmail = req.body.email
     try {
         // case of new parent
-        const parentObj = await Parent.find({ "email": parentEmail })
-        if (parentObj === null || parentObj === undefined) {
+        console.log(`Parent Email:  ${parentEmail}`);
+        let parentObj = await Parent.find({ "email": parentEmail })
+        console.log(`Parent from DB:  ${parentObj}`);
+        if (parentObj === null && parentObj === undefined && parentObj === '' ) {
             // save new parent
             const newParent = new Parent({
                 first_name: req.body.first_name,
@@ -44,6 +46,7 @@ async function addParent(parentEmail) {
                 questions: req.body.questions,
                 lastLoginTime: new Date().getTime()
             })
+
             parentObj = await newParent.save();
             // res.send(retrunResponse(200, parentObj, ""));
             return parentObj
@@ -61,7 +64,7 @@ async function addParent(parentEmail) {
 async function saveParent(req, res) {
     try {
         // case of new parent
-        const parentObj = await addParent(req.body.email);
+        const parentObj = await addParent(req);
         console.log(`Parent :  ${parentObj}`);
         res.send(retrunResponse(200, parentObj, ""));
     } catch (error) {

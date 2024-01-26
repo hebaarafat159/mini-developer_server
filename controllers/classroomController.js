@@ -29,7 +29,7 @@ function retrunResponse(status, body, message) {
 async function register(req, res) {
     try {
         // save or returun parent object
-        const parent = await parentController.addParent(req.body.email)
+        const parent = await parentController.addParent(req)
         console.log(`Parent Object : ${parent}`)
 
         // save or return student object

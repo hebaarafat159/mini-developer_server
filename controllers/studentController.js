@@ -1,12 +1,13 @@
 import 'dotenv/config'
 import mongoose from "mongoose";
 import Student from '../models/studentModel.js';
-import parentController from '../controllers/parentController.js'
+import parentController from './parentController.js';
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
     saveStudent,
+    addStudent,
     getStudent,
     updateStudent,
     getStudents
@@ -27,28 +28,46 @@ function retrunResponse(status, body, message) {
     };
 }
 
+async function addStudent(student, parentId) {
+    let studentObject = null
+    try {
+        // get parent Object
+        const parent = parentController.getParentById(parentId)
+        // save or return student object
+        if (parent !== null) student.parent_id = parent
+        if (student._id !== null && student._id !== undefined) {
+            studentObject = await Student.findOne({ "_id": student._id })
+        } else {
+            const newStudent = new Student({
+                first_name: student.first_name,
+                last_name: student.last_name,
+                age: student.age,
+                hasComputer: student.hasComputer,
+                email: student.email,
+                mobile: student.mobile,
+                hear_about_us: student.hear_about_us,
+                questions: student.questions,
+                parent_id: student.parent,
+                lastLoginTime: new Date().getTime()
+            })
+            studentObject = await newStudent.save();
+            console.log(`Student Object: ${studentObject}`);
+        }
+
+    } catch (error) {
+        console.log("Error" + error);
+        studentObject = null
+    }
+
+    return studentObject
+}
+
 async function saveStudent(req, res) {
     try {
         // case of new parent
-        if (await Student.count({ "_id": req.body._id }) === 0) { 
-            // const parentObject = parentController.getParentById(req.body.parent_id)
-            // console.log(`Parent Object : ${JSON.stringify(parentObject)}`)
-            // save new parent
-            const newStudent = new Student({
-                first_name: req.body.first_name,
-                last_name: req.body.last_name,
-                age: req.body.age,
-                hasComputer: req.body.hasComputer,
-                email: req.body.email,
-                mobile: req.body.mobile,
-                hear_about_us: req.body.hear_about_us,
-                questions: req.body.questions,
-                parent_id: req.body.parent_id,
-                lastLoginTime: new Date().getTime()
-            })
-            const studentObj = await newStudent.save();
-            res.send(retrunResponse(200, studentObj, ""));
-        }
+        const studentObj = await addStudent(req.body.child, req.body.parent_id);
+        console.log(`Student :  ${studentObj}`);
+        res.send(retrunResponse(200, studentObj, ""));
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));

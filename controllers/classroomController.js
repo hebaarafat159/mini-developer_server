@@ -8,7 +8,6 @@ mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
     register,
-
 }
 
 /**
@@ -31,8 +30,20 @@ async function register(req, res) {
         // save or returun parent object
         const parent = await parentController.addParent(req)
         console.log(`Parent Object : ${parent}`)
-
         // save or return student object
+        const students = []
+        if (parent !== null) {
+            if (req.body.children && req.body.children.length > 0) {
+                for (let i = 0; i < req.body.children.length; i++) {
+                    const child = req.body.children[i]
+                    console.log(`Students ${JSON.stringify()}`);
+                    const studentObj = await studentController.addStudent(child, parent);
+                    console.log(`Student :  ${studentObj}`);
+                    students.push(studentObj)
+                }
+            }
+        }
+        console.log(`Students : ${students.length}`)
 
         // save or update classroom bject
 

@@ -30,12 +30,11 @@ function retrunResponse(status, body, message) {
 
 async function addParent(req) {
     const parentEmail = req.body.email
+    let parentObj = null
     try {
         // case of new parent
-        console.log(`Parent Email:  ${parentEmail}`);
-        let parentObj = await Parent.find({ "email": parentEmail })
-        console.log(`Parent from DB:  ${parentObj}`);
-        if (parentObj === null && parentObj === undefined && parentObj === '' ) {
+        parentObj = await Parent.findOne({ "email": parentEmail })
+        if (parentObj === null) {
             // save new parent
             const newParent = new Parent({
                 first_name: req.body.first_name,
@@ -46,21 +45,15 @@ async function addParent(req) {
                 questions: req.body.questions,
                 lastLoginTime: new Date().getTime()
             })
-
             parentObj = await newParent.save();
-            // res.send(retrunResponse(200, parentObj, ""));
-            return parentObj
-        } else {
-            console.log(`Parent :  ${parentObj}`);
-            // res.send(retrunResponse(200, parentObj, ""));
-            return parentObj
         }
     } catch (error) {
         console.log("Error" + error);
-        // res.send(retrunResponse(error.code, null, error.name));
-        return null
+        parentObj = null
     }
+    return parentObj
 }
+
 async function saveParent(req, res) {
     try {
         // case of new parent
@@ -104,7 +97,7 @@ async function getParents(req, res) {
 
 async function getParent(req, res) {
     try {
-        let parentObject = await Parent.findById({ "email": req.params.email })
+        let parentObject = await Parent.findOne({ "email": req.params.email })
         res.send(retrunResponse(200, parentObject, ""));
     } catch (error) {
         console.log("Error" + error);
@@ -115,7 +108,7 @@ async function getParent(req, res) {
 async function getParentById(parentId) {
     let parentObject = null
     try {
-        parentObject = await Parent.findById({ "_id": parentId })
+        parentObject = await Parent.findOne({ "_id": parentId })
         return parentObject;
     } catch (error) {
         console.log("Error" + error);

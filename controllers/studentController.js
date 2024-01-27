@@ -28,16 +28,20 @@ function retrunResponse(status, body, message) {
     };
 }
 
-async function addStudent(student, parentId) {
+async function addStudent(student, parentObject) {
     let studentObject = null
     try {
-        // get parent Object
-        const parent = parentController.getParentById(parentId)
-        // save or return student object
-        if (parent !== null) student.parent_id = parent
-        if (student._id !== null && student._id !== undefined) {
-            studentObject = await Student.findOne({ "_id": student._id })
-        } else {
+        student.parent_id = parentObject
+        console.log(`Child : ${JSON.stringify(student)} \n\n`)
+        studentObject = await Student.findOne({
+            "parent_id": parentObject._id,
+            "first_name": student.first_name,
+            "last_name": student.last_name
+        })
+
+        console.log(`STudent object : ${JSON.stringify(studentObject)} \n\n`)
+
+        if (studentObject === null) {
             const newStudent = new Student({
                 first_name: student.first_name,
                 last_name: student.last_name,
@@ -47,11 +51,12 @@ async function addStudent(student, parentId) {
                 mobile: student.mobile,
                 hear_about_us: student.hear_about_us,
                 questions: student.questions,
-                parent_id: student.parent,
+                parent_id: student.parent_id,
                 lastLoginTime: new Date().getTime()
             })
+            console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)
             studentObject = await newStudent.save();
-            console.log(`Student Object: ${studentObject}`);
+            console.log(`saved Student Object: ${studentObject}`);
         }
 
     } catch (error) {

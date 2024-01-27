@@ -39,7 +39,7 @@ async function register(req, res) {
                     console.log(`Students ${JSON.stringify()}`);
                     const studentObj = await studentController.addStudent(child, parent);
                     console.log(`Student :  ${studentObj}`);
-                    students.push(studentObj)
+                    if (studentObj !== null) students.push(studentObj)
                 }
             }
         }

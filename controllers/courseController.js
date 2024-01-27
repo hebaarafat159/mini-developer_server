@@ -8,7 +8,8 @@ export default {
     saveCourse,
     getCourse,
     getCourses,
-    updateCourse
+    updateCourse,
+    getCourseById
 }
 
 /**
@@ -94,3 +95,14 @@ async function getCourse(req, res) {
         res.send(retrunResponse(error.code, null, error.name));
     }
 }
+
+async function getCourseById(courseId) {
+    try {
+        let courseObject = await Course.findById({ "_id": courseId })
+        return courseObject
+    } catch (error) {
+        console.log("Error" + error);
+        return null
+    }
+}
+

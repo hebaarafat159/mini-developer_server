@@ -14,11 +14,12 @@ const userSchema = new Schema({
         required: true,
         ref: 'students'
     },
-    course_id:
-    {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'courses'
-    },
+    course_id: { type: String, default: "" },
+    // {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'courses'
+    // },
+    title: { type: String, default: "" },
     lastLoggedinTime:
     {
         type: Number,

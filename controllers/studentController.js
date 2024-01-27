@@ -32,14 +32,12 @@ async function addStudent(student, parentObject) {
     let studentObject = null
     try {
         student.parent_id = parentObject
-        console.log(`Child : ${JSON.stringify(student)} \n\n`)
+
         studentObject = await Student.findOne({
             "parent_id": parentObject._id,
             "first_name": student.first_name,
             "last_name": student.last_name
         })
-
-        console.log(`STudent object : ${JSON.stringify(studentObject)} \n\n`)
 
         if (studentObject === null) {
             const newStudent = new Student({
@@ -54,9 +52,9 @@ async function addStudent(student, parentObject) {
                 parent_id: student.parent_id,
                 lastLoginTime: new Date().getTime()
             })
-            console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)
+            // console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)
             studentObject = await newStudent.save();
-            console.log(`saved Student Object: ${studentObject}`);
+            // console.log(`saved Student Object: ${studentObject}`);
         }
 
     } catch (error) {
@@ -71,7 +69,7 @@ async function saveStudent(req, res) {
     try {
         // case of new parent
         const studentObj = await addStudent(req.body.child, req.body.parent_id);
-        console.log(`Student :  ${studentObj}`);
+        // console.log(`Student :  ${studentObj}`);
         res.send(retrunResponse(200, studentObj, ""));
     } catch (error) {
         console.log("Error" + error);

@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Classroom from '../models/classroomModel.js';
 import parentController from './parentController.js';
 import studentController from './studentController.js';
+import courseController from './courseController.js';
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
 
@@ -30,15 +31,14 @@ async function register(req, res) {
         // save or returun parent object
         const parent = await parentController.addParent(req)
         console.log(`Parent Object : ${parent}`)
+
         // save or return student object
         const students = []
         if (parent !== null) {
             if (req.body.children && req.body.children.length > 0) {
                 for (let i = 0; i < req.body.children.length; i++) {
                     const child = req.body.children[i]
-                    console.log(`Students ${JSON.stringify()}`);
                     const studentObj = await studentController.addStudent(child, parent);
-                    console.log(`Student :  ${studentObj}`);
                     if (studentObj !== null) students.push(studentObj)
                 }
             }
@@ -46,22 +46,58 @@ async function register(req, res) {
         console.log(`Students : ${students.length}`)
 
         // save or update classroom bject
+        const registerations = []
+        if (students && students.length > 0) {
+            // get course object from database, in case of course id exists
+            let courseObject = null
+            if (req.body.course_id !== "") courseObject = await courseController.getCourseById(req.body.course_id)
 
+            // save each student 
+            students.map(async (student) => {
+                console.log(`Student : ${student}`)
+                const registration = await saveRegistration(courseObject, parent, student)
+                if (registration !== null) registerations.push(registration)
+            })
 
-        // case of new parent
-        // if (await Classroom.count({ "_id": req.body.id }) === 0) {
-        // save new parent
-        // const newClassroom = new Classroom({
-        //     parent_id: req.body.parent_id,
-        //     student_id: req.body.student_id,
-        //     course_id: req.body.course_id,
-        //     lastLoginTime: new Date().getTime()
-        // })
-        // const classroomObj = await newClassroom.save();
-        // res.send(retrunResponse(200, classroomObj, ""));
-        // }
+            console.log(`Registerations : ${registerations.length}`)
+        }
+
+        res.send(retrunResponse(200, registerations, ""));
+
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));
     }
+}
+
+async function saveRegistration(courseObject, parentObject, studentObject) {
+    let registrationObject = null
+
+    let courseId = ''
+    if (courseObject !== null) courseId = courseObject._id
+    console.log(`course id : ${courseId}`);
+
+    // case of registration is exist
+    registrationObject = await Classroom.findOne({
+        "parent_id": parentObject._id,
+        "student_id": studentObject._id,
+        "course_id": courseId
+    })
+    console.log(`registrationObject : ${registrationObject}`);
+
+    // case of new ristration
+    if (registrationObject === null) {
+        if (courseId === '') {
+            const newClassroom = new Classroom({
+                parent_id: parentObject._id,
+                student_id: studentObject._id,
+                lastLoginTime: new Date().getTime()
+            })
+            registrationObject = await newClassroom.save();
+            // registrationObject = await Classroom.insertOne(newClassroom)
+        }
+        console.log(`saved registrationObject : ${registrationObject}`);
+    }
+
+    return registrationObject
 }

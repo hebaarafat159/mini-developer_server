@@ -4,6 +4,8 @@ import Classroom from '../models/classroomModel.js';
 import parentController from './parentController.js';
 import studentController from './studentController.js';
 import courseController from './courseController.js';
+import mailServer from '../mailServer.js';
+
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
 
@@ -56,7 +58,10 @@ async function register(req, res) {
             students.map(async (student) => {
                 console.log(`Student : ${student}`)
                 const registration = await saveRegistration(courseObject, parent, student)
-                if (registration !== null) registerations.push(registration)
+                if (registration !== null) {
+                    mailServer.sendRegistrationEmail(courseObject, parent, student)
+                    registerations.push(registration)
+                }
             })
 
             console.log(`Registerations : ${registerations.length}`)
@@ -94,7 +99,6 @@ async function saveRegistration(courseObject, parentObject, studentObject) {
                 lastLoginTime: new Date().getTime()
             })
             registrationObject = await newClassroom.save();
-            // registrationObject = await Classroom.insertOne(newClassroom)
         }
         console.log(`saved registrationObject : ${registrationObject}`);
     }

@@ -40,6 +40,7 @@ async function register(req, res) {
             if (req.body.children && req.body.children.length > 0) {
                 for (let i = 0; i < req.body.children.length; i++) {
                     const child = req.body.children[i]
+                    // TODO add to student object preffered_location: preffered_location, program_type: program_type,
                     const studentObj = await studentController.addStudent(child, parent);
                     if (studentObj !== null) students.push(studentObj)
                 }

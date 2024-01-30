@@ -6,6 +6,8 @@ const userSchema = new Schema({
     last_name: { type: String, required: true },
     age: { type: Number, required: true },
     hasComputer: { type: Boolean, required: true, default: true },
+    preffered_location: { type: String },
+    program_type: { type: String },
     email: { type: String },
     mobile: { type: String },
     hear_about_us: { type: String },

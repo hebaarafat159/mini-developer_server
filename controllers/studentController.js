@@ -36,7 +36,7 @@ async function addStudent(student, parentObject) {
         studentObject = await Student.findOne({
             "parent_id": parentObject._id,
             "first_name": student.first_name,
-            "last_name": student.last_name
+            "last_name": student.last_name,
         })
 
         if (studentObject === null) {
@@ -50,6 +50,8 @@ async function addStudent(student, parentObject) {
                 hear_about_us: student.hear_about_us,
                 questions: student.questions,
                 parent_id: student.parent_id,
+                preffered_location: preffered_location,
+                program_type: program_type,
                 lastLoginTime: new Date().getTime()
             })
             // console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)

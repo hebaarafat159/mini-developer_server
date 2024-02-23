@@ -10,10 +10,11 @@ import classroomsRouter from '../../routers/classrooms.js'
 const api = express();
 
 const router = Router();
-router.get("/hello", (req, res) => res.send("Hello World!"));
-
 api.use(cors());
 api.use(bodyParser.json());
+
+router.get("/api/hello", (req, res) => res.send("Hello World!"));
+
 api.use("/api/", router);
 api.use("/api/courses", coursesRouter);
 app.use("/api/parents", parentsRouter);

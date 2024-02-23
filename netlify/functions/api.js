@@ -3,9 +3,9 @@ import serverless from "serverless-http";
 import cors from "cors";
 import bodyParser from "body-parser";
 import coursesRouter from '../../routers/courses.js'
-import parentsRouter from './routers/parents.js'
-import studentsRouter from './routers/students.js'
-import classroomsRouter from './routers/classrooms.js'
+import parentsRouter from '../../routers/parents.js'
+import studentsRouter from '../../routers/students.js'
+import classroomsRouter from '../../routers/classrooms.js'
 
 const api = express();
 

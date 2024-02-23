@@ -17,8 +17,8 @@ router.get("/api/hello", (req, res) => res.send("Hello World!"));
 
 api.use("/api/", router);
 api.use("/api/courses", coursesRouter);
-app.use("/api/parents", parentsRouter);
-app.use("/api/students", studentsRouter);
-app.use("/api/classrooms", classroomsRouter);
+api.use("/api/parents", parentsRouter);
+api.use("/api/students", studentsRouter);
+api.use("/api/classrooms", classroomsRouter);
 
 export const handler = serverless(api);

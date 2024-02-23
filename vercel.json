@@ -1,8 +1,7 @@
 {
-    "rewrites": [
-        {
-            "source": "/api/(.*)",
-            "destination": "/api"
+    "functions": {
+        "api": {
+            "handler": "server.js"
         }
-    ]
+    }
 }

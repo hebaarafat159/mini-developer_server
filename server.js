@@ -9,6 +9,11 @@ import studentsRouter from './routers/students.js'
 import classroomsRouter from './routers/classrooms.js'
 
 const app = express();
+
+app.get('/api/hello', (req, res) => {
+    res.json({ message: 'Hello from Express!' });
+  });
+  
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/courses", coursesRouter);

@@ -31,7 +31,7 @@ function retrunResponse(status, body, message) {
 async function addStudent(student, parentObject) {
     let studentObject = null
     try {
-        student.parent_id = parentObject
+        // student.parent_id = parentObject
 
         studentObject = await Student.findOne({
             "parent_id": parentObject._id,
@@ -40,21 +40,8 @@ async function addStudent(student, parentObject) {
         })
 
         if (studentObject === null) {
-            const newStudent = new Student({
-                first_name: student.first_name,
-                last_name: student.last_name,
-                age: student.age,
-                hasComputer: student.hasComputer,
-                email: student.email,
-                mobile: student.mobile,
-                hear_about_us: student.hear_about_us,
-                questions: student.questions,
-                parent_id: student.parent_id,
-                preffered_location: preffered_location,
-                program_type: program_type,
-                lastLoginTime: new Date().getTime()
-            })
-            // console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)
+            const newStudent = new Student(student)
+            console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)
             studentObject = await newStudent.save();
             // console.log(`saved Student Object: ${studentObject}`);
         }

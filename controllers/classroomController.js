@@ -38,37 +38,45 @@ async function register(req, res) {
         const students = []
         if (parent !== null) {
             if (req.body.children && req.body.children.length > 0) {
-                for (let i = 0; i < req.body.children.length; i++) {
-                    const child = req.body.children[i]
-                    // TODO add to student object preffered_location: preffered_location, program_type: program_type,
+                req.body.children.map(async (child) => {
+
+                    // adding parent_id,program_type and preffered_location for each student object
+                    child.parent_id = parent
+                    child.program_type = req.body.program_type
+                    child.preffered_location = req.body.preffered_location
+
+                    console.log(`Students Child : ${JSON.stringify(child)}`)
                     const studentObj = await studentController.addStudent(child, parent);
                     if (studentObj !== null) students.push(studentObj)
-                }
+                })
             }
         }
         console.log(`Students : ${students.length}`)
-
+        // TODO continue
         // save or update classroom bject
-        const registerations = []
-        if (students && students.length > 0) {
-            // get course object from database, in case of course id exists
-            let courseObject = null
-            if (req.body.course_id !== "") courseObject = await courseController.getCourseById(req.body.course_id)
+        // const registerations = []
+        // if (students && students.length > 0) {
+        //     // get course object from database, in case of course id exists
+        //     let courseObject = null
+        //     if (req.body.course_id !== "") courseObject = await courseController.getCourseById(req.body.course_id)
 
-            // save each student 
-            students.map(async (student) => {
-                console.log(`Student : ${student}`)
-                const registration = await saveRegistration(courseObject, parent, student)
-                if (registration !== null) {
-                    mailServer.sendRegistrationEmail(courseObject, parent, student)
-                    registerations.push(registration)
-                }
-            })
+        //     // save each student 
+        //     students.map(async (student) => {
+        //         console.log(`Student : ${student}`)
+        //         const registration = await saveRegistration(courseObject, parent, student)
+        //         if (registration !== null) {
+        //             mailServer.sendRegistrationEmail(courseObject, parent, student)
+        //             registerations.push(registration)
+        //         }
+        //     })
 
-            console.log(`Registerations : ${registerations.length}`)
-        }
+        //     console.log(`Registerations : ${registerations.length}`)
+        // }
 
-        res.send(retrunResponse(200, registerations, ""));
+        // if (registerations && registerations.length > 0)
+        //     res.send(retrunResponse(200, registerations, ""));
+        // else
+        //     res.send(retrunResponse(400, null, "We Couldn't save your registration, please try again later "));
 
     } catch (error) {
         console.log("Error" + error);

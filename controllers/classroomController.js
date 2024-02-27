@@ -34,50 +34,49 @@ async function register(req, res) {
         const parent = await parentController.addParent(req)
         console.log(`Parent Object : ${parent}`)
 
-        // save or return student object
-        const students = []
         if (parent !== null) {
-            if (req.body.children && req.body.children.length > 0) {
-                req.body.children.map(async (child) => {
 
+            // save or return student object
+            if (req.body.children && req.body.children.length > 0) {
+                const students = await Promise.all(req.body.children.map(async (child) => {
                     // adding parent_id,program_type and preffered_location for each student object
                     child.parent_id = parent
                     child.program_type = req.body.program_type
                     child.preffered_location = req.body.preffered_location
 
-                    console.log(`Students Child : ${JSON.stringify(child)}`)
-                    const studentObj = await studentController.addStudent(child, parent);
-                    if (studentObj !== null) students.push(studentObj)
-                })
+                    return await studentController.addStudent(child, parent);
+                }));
+                console.log(`Students : ${students.length}`)
+
+                // save or update classroom bject
+                if (students && students.length > 0) {
+
+                    // get course object from database, in case of course id exists
+                    let courseObject = null
+                    if (req.body.course_id !== "") courseObject = await courseController.getCourseById(req.body.course_id)
+
+                    // save each student 
+                    const registerations = await Promise.all(students.map(async (student) => {
+                        console.log(`Student : ${student}`)
+                        const registration = await saveRegistration(courseObject, parent, student)
+                        if (registration !== null) {
+                            console.log(`\nSend Email course: ${JSON.stringify(courseObject)}`)
+                            console.log(`\nSend Email parent: ${JSON.stringify(parent)}`)
+                            console.log(`\nSend Email student: ${JSON.stringify(student)}`)
+                            console.log(`\nSend Email registration: ${JSON.stringify(registration)}`)
+                            mailServer.sendRegistrationEmail(courseObject, parent, student)
+                            console.log(`Registeration object : ${registration}`)
+                            return registration;
+                        }
+                    }))
+                    console.log(`Registerations : ${registerations.length}`)
+                    if (registerations && registerations.length > 0)
+                        res.send(retrunResponse(200, registerations, ""));
+                    else
+                        res.send(retrunResponse(400, null, "We Couldn't save your registration, please try again later "));
+                }
             }
         }
-        console.log(`Students : ${students.length}`)
-        // TODO continue
-        // save or update classroom bject
-        // const registerations = []
-        // if (students && students.length > 0) {
-        //     // get course object from database, in case of course id exists
-        //     let courseObject = null
-        //     if (req.body.course_id !== "") courseObject = await courseController.getCourseById(req.body.course_id)
-
-        //     // save each student 
-        //     students.map(async (student) => {
-        //         console.log(`Student : ${student}`)
-        //         const registration = await saveRegistration(courseObject, parent, student)
-        //         if (registration !== null) {
-        //             mailServer.sendRegistrationEmail(courseObject, parent, student)
-        //             registerations.push(registration)
-        //         }
-        //     })
-
-        //     console.log(`Registerations : ${registerations.length}`)
-        // }
-
-        // if (registerations && registerations.length > 0)
-        //     res.send(retrunResponse(200, registerations, ""));
-        // else
-        //     res.send(retrunResponse(400, null, "We Couldn't save your registration, please try again later "));
-
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));
@@ -101,14 +100,13 @@ async function saveRegistration(courseObject, parentObject, studentObject) {
 
     // case of new ristration
     if (registrationObject === null) {
-        if (courseId === '') {
-            const newClassroom = new Classroom({
-                parent_id: parentObject._id,
-                student_id: studentObject._id,
-                lastLoginTime: new Date().getTime()
-            })
-            registrationObject = await newClassroom.save();
-        }
+        const newClassroom = new Classroom({
+            parent_id: parentObject._id,
+            student_id: studentObject._id,
+            course_id: courseId,
+            lastLoginTime: new Date().getTime()
+        })
+        registrationObject = await newClassroom.save();
         console.log(`saved registrationObject : ${registrationObject}`);
     }
 

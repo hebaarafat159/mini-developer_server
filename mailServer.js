@@ -25,12 +25,14 @@ const transporter = nodemailer.createTransport({
 
 function sendRegistrationEmail(course, parent, student) {
     const subjectText = `[Test Mini Developer Registration] ${(course) ? course.title : 'New Registration'}`
-    const mailText = ` Child Name: ${student.first_name} ${student.first_name} 
+    const mailText = ` Child Name: ${student.first_name} ${student.last_name} 
         \n Parent Name: ${parent.first_name} ${parent.last_name} 
         \n Email: ${parent.email} 
         \n Mobile Number: ${parent.mobile} 
         \n Child's Age: ${student.age}
-        \n Has Computer: ${(student.hasComputer) ? 'Yes' : 'No'}
+        \n Has Computer: ${(student.hasComputer) ? 'Yes' : 'No'} 
+        \n Programe Type: ${student.program_type}
+       ${(student.program_type && student.program_type === 'In Person') ? `\n Preffered Location: ${student.preffered_location}` : ''}
         \n Questions: ${parent.questions}`
     const mailOptions = {
         from: fromEmailAddress,

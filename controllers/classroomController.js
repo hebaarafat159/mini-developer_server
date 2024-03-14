@@ -1,10 +1,11 @@
 import 'dotenv/config'
 import mongoose from "mongoose";
-import Classroom from '../models/classroomModel.js';
+// import Classroom from '../models/classroomModel.js';
 import parentController from './parentController.js';
 import studentController from './studentController.js';
 import courseController from './courseController.js';
 import mailServer from '../mailServer.js';
+import Requests from '../models/requestModel.js';
 
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
@@ -48,7 +49,7 @@ async function register(req, res) {
                 }));
                 console.log(`Students : ${students.length}`)
 
-                // save or update classroom bject
+                // save or update requests bject
                 if (students && students.length > 0) {
 
                     // get course object from database, in case of course id exists
@@ -91,7 +92,7 @@ async function saveRegistration(courseObject, parentObject, studentObject) {
     console.log(`course id : ${courseId}`);
 
     // case of registration is exist
-    registrationObject = await Classroom.findOne({
+    registrationObject = await Requests.findOne({
         "parent_id": parentObject._id,
         "student_id": studentObject._id,
         "course_id": courseId
@@ -100,13 +101,13 @@ async function saveRegistration(courseObject, parentObject, studentObject) {
 
     // case of new ristration
     if (registrationObject === null) {
-        const newClassroom = new Classroom({
+        const newRequest = new Requests({
             parent_id: parentObject._id,
             student_id: studentObject._id,
             course_id: courseId,
             lastLoginTime: new Date().getTime()
         })
-        registrationObject = await newClassroom.save();
+        registrationObject = await newRequest.save();
         console.log(`saved registrationObject : ${registrationObject}`);
     }
 

@@ -6,6 +6,7 @@ import coursesRouter from '../routers/courses.js'
 import parentsRouter from '../routers/parents.js'
 import studentsRouter from '../routers/students.js'
 import classroomsRouter from '../routers/classrooms.js'
+import locationsRouter from '../routers/locations.js'
 
 const api = express();
 
@@ -19,5 +20,6 @@ api.use("/api/courses", coursesRouter);
 app.use("/api/parents", parentsRouter);
 app.use("/api/students", studentsRouter);
 app.use("/api/classrooms", classroomsRouter);
+app.use("/api/locations", locationsRouter);
 
 export const handler = serverless(api);

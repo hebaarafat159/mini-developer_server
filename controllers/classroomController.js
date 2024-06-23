@@ -148,9 +148,11 @@ async function saveClassroom(req, res) {
                 end_date: req.body.end_date,
                 start_time: req.body.start_time,
                 end_time: req.body.end_time,
+                days: req.body.days,
                 course_id: course._id,
                 region_id: place.region_id,
-                place_id: place._id
+                place_id: place._id,
+
             })
             const classObj = await newClassroom.save();
             res.send(retrunResponse(200, classObj, ""));

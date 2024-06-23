@@ -7,6 +7,7 @@ const userSchema = new Schema({
     end_date: { type: String, default: "" },
     start_time: { type: String, default: "" },
     end_time: { type: String, default: "" },
+    days: { type: String, default: "" },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,

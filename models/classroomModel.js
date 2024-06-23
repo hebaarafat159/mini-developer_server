@@ -2,34 +2,38 @@ import 'dotenv/config';
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
+    title: { type: String, default: "" },
+    start_date: { type: String, default: "" },
+    end_date: { type: String, default: "" },
+    start_time: { type: String, default: "" },
+    end_time: { type: String, default: "" },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'parents'
     },
     student_id:
     {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'students'
     },
-    course_id: { type: String, default: "" },
-    // {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'courses'
-    // },
-    title: { type: String, default: "" },
-    lastLoggedinTime:
+    course_id:
     {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'courses'
+    },
+    region_id:
+    {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        default: function () {
-            return new Date().getTime();
-        }
+        ref: 'regions'
+    },
+    place_id:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'places'
     }
-}, {
-    timestamp: true
 });
 
 export default mongoose.model('classrooms', userSchema);

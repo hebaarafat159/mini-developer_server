@@ -7,7 +7,12 @@ mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
     saveRegion,
-    getRegions
+    getRegions,
+    getActiveRegions,
+    savePalce,
+    getAllPlaces,
+    getRegionPalces,
+    getPlaceById
 }
 
 /**
@@ -26,9 +31,10 @@ function retrunResponse(status, body, message) {
 }
 
 async function saveRegion(req, res) {
-    let region = await Region.findOne({ 'name': req.body.name });//getRegionByName(req.body.name);
-    console.log(`saved Student Object: ${JSON.stringify(region)}`);
     try {
+        let region = await Region.findOne({ 'name': req.body.name });//getRegionByName(req.body.name);
+        console.log(`saved Student Object: ${JSON.stringify(region)}`);
+
         // case of new region
         if (region === null) {
             // save new region
@@ -57,3 +63,74 @@ async function getRegions(req, res) {
         res.send(retrunResponse(error.code, null, error.name));
     }
 }
+
+async function getActiveRegions(req, res) {
+    try {
+        let regions = await Region.find({ 'is_active': true });
+        res.send(retrunResponse(200, regions, ''));
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
+
+async function getRegionPalces(req, res) {
+    try {
+        let palces = await Region.find({ 'is_active': true, 'region_id': req.params.regionId });
+        res.send(retrunResponse(200, palces, ''));
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
+
+async function getAllPlaces(req, res) {
+    try {
+        let palces = await Place.find({});
+        res.send(retrunResponse(200, palces, ''));
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
+
+
+async function savePalce(req, res) {
+    try {
+        let palce = await Place.findOne({ 'name': req.body.name });//getRegionByName(req.body.name);
+        console.log(`saved Region Place: ${JSON.stringify(palce)}`);
+
+        // case of new place
+        if (palce === null) {
+            let region = await Region.findOne({ '_id': req.body.region_id });
+            console.log(`Region: ${JSON.stringify(region)}`);
+
+            // save new place
+            const newPlace = new Place({
+                name: req.body.name,
+                address: req.body.address,
+                is_active: req.body.is_active,
+                region_id: region._id
+            })
+            const placeObj = await newPlace.save();
+            res.send(retrunResponse(200, placeObj, ""));
+        } else {
+            res.send(retrunResponse(200, palce, ""));
+        }
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
+
+async function getPlaceById(placeId) {
+    try {
+        let placeObject = await Place.findOne({ '_id': placeId })
+        return placeObject
+    } catch (error) {
+        console.log("Error" + error);
+        return null
+    }
+}
+
+

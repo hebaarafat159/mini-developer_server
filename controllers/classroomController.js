@@ -6,12 +6,15 @@ import studentController from './studentController.js';
 import courseController from './courseController.js';
 import mailServer from '../mailServer.js';
 import Requests from '../models/requestModel.js';
-
+import Classroom from '../models/classroomModel.js';
+import locationController from './locationController.js';
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
     register,
+    getCoursePlaces,
+    saveClassroom
 }
 
 /**
@@ -112,4 +115,50 @@ async function saveRegistration(courseObject, parentObject, studentObject) {
     }
 
     return registrationObject
+}
+
+async function getCoursePlaces(req, res) {
+    try {
+        let palces = await Classroom.find({ 'course_id': req.params.courseId, 'region_id': req.params.regionId })
+            .populate(['region_id', 'course_id', 'place_id']);
+        res.send(retrunResponse(200, palces, ''));
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
+
+async function saveClassroom(req, res) {
+    try {
+        let classroom = await Classroom.findOne({ '_id': req.body._id });
+        console.log(`saved class Place: ${JSON.stringify(Classroom)}`);
+        console.log(`Place ID: ${req.body.place_id} , course ID: ${req.body.course_id}`);
+        // case of new classroom
+        if (classroom === null || classroom === undefined) {
+            let place = await locationController.getPlaceById(req.body.place_id);
+            console.log(`place: ${JSON.stringify(place)}`);
+
+            let course = await courseController.getCourseById(req.body.course_id);
+            console.log(`course: ${JSON.stringify(course)}`);
+
+            // save new place
+            const newClassroom = new Classroom({
+                title: req.body.title,
+                start_date: req.body.start_date,
+                end_date: req.body.end_date,
+                start_time: req.body.start_time,
+                end_time: req.body.end_time,
+                course_id: course._id,
+                region_id: place.region_id,
+                place_id: place._id
+            })
+            const classObj = await newClassroom.save();
+            res.send(retrunResponse(200, classObj, ""));
+        } else {
+            res.send(retrunResponse(200, classroom, ""));
+        }
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
 }

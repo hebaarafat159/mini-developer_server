@@ -23,20 +23,21 @@ const transporter = nodemailer.createTransport({
 });
 
 
-function sendRegistrationEmail(course, parent, student) {
-    const subjectText = `[Test Mini Developer Registration] ${(course) ? course.title : 'New Registration'}`
-    const mailText = ` Child Name: ${student.first_name} ${student.last_name} 
-        \n Parent Name: ${parent.first_name} ${parent.last_name} 
-        \n Email: ${parent.email} 
-        \n Mobile Number: ${parent.mobile} 
-        \n Child's Age: ${student.age}
-        \n Has Computer: ${(student.hasComputer) ? 'Yes' : 'No'} 
-        \n Programe Type: ${student.program_type}
-       ${(student.program_type && student.program_type === 'In Person') ? `\n Preffered Location: ${student.preffered_location}` : ''}
-        \n Questions: ${parent.questions}`
+function sendRegistrationEmail(registration) {
+    const subjectText = `[Test Mini Developer Registration] ${(registration.courseObj) ? registration.courseObj.title : 'New Registration'}`
+    const mailText = ` Child Name: ${registration.studentObj.first_name} ${registration.studentObj.last_name} 
+        \n Parent Name: ${registration.parentObj.first_name} ${registration.parentObj.last_name} 
+        \n Email: ${registration.parentObj.email} 
+        \n Mobile Number: ${registration.parentObj.mobile} 
+        \n Child's Age: ${registration.studentObj.age}
+        \n Has Computer: ${(registration.studentObj.hasComputer) ? 'Yes' : 'No'} 
+        \n Programe Type: ${registration.program_type}
+        ${(registration.program_type && registration.program_type === 'In Person') ? `\n Preffered Region: ${registration.regionObj.name}` : ''}
+        ${(registration.classroomObj && registration.classroomObj.place_id) ? `\n Preffered Location: ${registration.classroomObj.place_id.name}` : ''}
+        \n Questions: ${registration.parentObj.questions}`
     const mailOptions = {
-        from: fromEmailAddress,
-        to: toEmailAddress,
+        from: process.env.APP_NODE_CLIENT_SIDE_FROM_EMAIL_ADDRESS,
+        to: process.env.APP_NODE_CLIENT_SIDE_TO_EMAIL_ADDRESS,
         subject: subjectText,
         text: mailText,
     };

@@ -34,9 +34,9 @@ function retrunResponse(status, body, message) {
 async function register(req, res) {
     try {
         // save or returun parent object
-        console.log(`Parent Object : ${req.body.parentData}`)
+        // console.log(`Parent Object : ${req.body.parentData}`)
         const parent = await parentController.addParent(req.body.parentData)
-        console.log(`Parent Object : ${parent}`)
+        // console.log(`Parent Object : ${parent}`)
 
         if (parent !== null) {
 
@@ -47,30 +47,44 @@ async function register(req, res) {
                     child.parent_id = parent
                     child.email = parent.email
                     child.mobile = parent.mobile
-                    child.program_type = req.body.program_type
-                    child.preffered_location = req.body.preffered_location
                     return await studentController.addStudent(child, parent);
                 }));
-                console.log(`Students : ${students.length}`)
+                // console.log(`Students : ${students.length}`)
 
                 // save or update requests bject
                 if (students && students.length > 0) {
+                    let requestObject = {
+                        parentObj: parent,
+                        program_type: req.body.program_type
+                    }
+
+                    // get region object from database
+                    if (req.body.region !== null) {
+                        let regionObject = await locationController.getRegionById(req.body.region._id)
+                        requestObject = { ...requestObject, regionObj: regionObject }
+                    }
 
                     // get course object from database, in case of course id exists
-                    let courseObject = null
-                    if (req.body.course_id !== "") courseObject = await courseController.getCourseById(req.body.course_id)
+                    if (req.body.course !== null) {
+                        let courseObject = await courseController.getCourseById(req.body.course._id)
+                        requestObject = { ...requestObject, courseObj: courseObject }
+                    }
 
-                    // save each student 
+                    // get classroom object
+                    if (req.body.classroom !== null) {
+                        let classroomObject = await Classroom.findById({ "_id": req.body.classroom._id }).populate('place_id')
+                        requestObject = { ...requestObject, classroomObj: classroomObject }
+                    }
+
+                    // save each students
                     const registerations = await Promise.all(students.map(async (student) => {
                         console.log(`Student : ${student}`)
-                        const registration = await saveRegistration(courseObject, parent, student)
+                        // add student to request object
+                        requestObject = { ...requestObject, studentObj: student }
+                        const registration = await saveRegistration(requestObject)
                         if (registration !== null) {
-                            console.log(`\nSend Email course: ${JSON.stringify(courseObject)}`)
-                            console.log(`\nSend Email parent: ${JSON.stringify(parent)}`)
-                            console.log(`\nSend Email student: ${JSON.stringify(student)}`)
-                            console.log(`\nSend Email registration: ${JSON.stringify(registration)}`)
-                            mailServer.sendRegistrationEmail(courseObject, parent, student)
-                            console.log(`Registeration object : ${registration}`)
+                            console.log(`Registeration object : ${JSON.stringify(requestObject)}`)
+                            mailServer.sendRegistrationEmail(requestObject)
                             return registration;
                         }
                     }))
@@ -88,30 +102,32 @@ async function register(req, res) {
     }
 }
 
-async function saveRegistration(courseObject, parentObject, studentObject) {
+async function saveRegistration(regisObj) {
     let registrationObject = null
-
-    let courseId = ''
-    if (courseObject !== null) courseId = courseObject._id
-    console.log(`course id : ${courseId}`);
-
+    console.log(`regisObj : ${JSON.stringify(regisObj)}`);
     // case of registration is exist
     registrationObject = await Requests.findOne({
-        "parent_id": parentObject._id,
-        "student_id": studentObject._id,
-        "course_id": courseId
+        "parent_id": regisObj.parentObj._id,
+        "student_id": regisObj.studentObj._id,
+        "course_id": regisObj.courseObj ? regisObj.courseObj._id : '',
+        "classroom_id": regisObj.classroomObj ? regisObj.classroomObj._id : '',
+        "region_id": regisObj.regionObj ? regisObj.regionObj._id : '',
     })
     console.log(`registrationObject : ${registrationObject}`);
 
     // case of new ristration
     if (registrationObject === null) {
         const newRequest = new Requests({
-            parent_id: parentObject._id,
-            student_id: studentObject._id,
-            course_id: courseId,
-            lastLoginTime: new Date().getTime()
+            "parent_id": regisObj.parentObj._id,
+            "student_id": regisObj.studentObj._id,
+            "course_id": regisObj.courseObj !== null ? regisObj.courseObj._id : '',
+            "classroom_id": regisObj.classroomObj !== null ? regisObj.classroomObj._id : '',
+            "region_id": regisObj.regionObj !== null ? regisObj.regionObj._id : '',
+            "program_type": regisObj.program_type,
+            "lastLoginTime": new Date().getTime()
         })
-        registrationObject = await newRequest.save();
+        registrationObject = await newRequest.save()
+        // .populate(['course_id', 'student_id', 'parent_id', 'region_id', 'classroom_id']);
         console.log(`saved registrationObject : ${registrationObject}`);
     }
 

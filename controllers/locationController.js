@@ -12,7 +12,8 @@ export default {
     savePalce,
     getAllPlaces,
     getRegionPalces,
-    getPlaceById
+    getPlaceById,
+    getRegionById
 }
 
 /**
@@ -133,4 +134,12 @@ async function getPlaceById(placeId) {
     }
 }
 
-
+async function getRegionById(regionId) {
+    try {
+        let regionObject = await Region.findOne({ '_id': regionId })
+        return regionObject
+    } catch (error) {
+        console.log("Error" + error);
+        return null
+    }
+}

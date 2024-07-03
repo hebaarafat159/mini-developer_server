@@ -2,6 +2,8 @@ import 'dotenv/config';
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
+
+    program_type: { type: String },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,
@@ -14,11 +16,25 @@ const userSchema = new Schema({
         required: true,
         ref: 'students'
     },
-    course_id: { type: String, default: "" },
-    // {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'courses'
-    // },
+    region_id:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        default: "",
+        ref: 'regions'
+    },
+    course_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        default: "",
+        ref: 'courses'
+    },
+    classroom_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        default: "",
+        ref: 'classrooms'
+    },
     title: { type: String, default: "" },
     lastLoggedinTime:
     {

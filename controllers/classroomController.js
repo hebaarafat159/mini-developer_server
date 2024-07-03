@@ -1,6 +1,5 @@
 import 'dotenv/config'
 import mongoose from "mongoose";
-// import Classroom from '../models/classroomModel.js';
 import parentController from './parentController.js';
 import studentController from './studentController.js';
 import courseController from './courseController.js';
@@ -35,7 +34,8 @@ function retrunResponse(status, body, message) {
 async function register(req, res) {
     try {
         // save or returun parent object
-        const parent = await parentController.addParent(req)
+        console.log(`Parent Object : ${req.body.parentData}`)
+        const parent = await parentController.addParent(req.body.parentData)
         console.log(`Parent Object : ${parent}`)
 
         if (parent !== null) {
@@ -45,9 +45,10 @@ async function register(req, res) {
                 const students = await Promise.all(req.body.children.map(async (child) => {
                     // adding parent_id,program_type and preffered_location for each student object
                     child.parent_id = parent
+                    child.email = parent.email
+                    child.mobile = parent.mobile
                     child.program_type = req.body.program_type
                     child.preffered_location = req.body.preffered_location
-
                     return await studentController.addStudent(child, parent);
                 }));
                 console.log(`Students : ${students.length}`)

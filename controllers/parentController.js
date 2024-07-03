@@ -29,7 +29,7 @@ function retrunResponse(status, body, message) {
 }
 
 async function addParent(req) {
-    const parentEmail = req.body.email
+    const parentEmail = req.email
     let parentObj = null
     try {
         // case of new parent
@@ -37,12 +37,12 @@ async function addParent(req) {
         if (parentObj === null) {
             // save new parent
             const newParent = new Parent({
-                first_name: req.body.first_name,
-                last_name: req.body.last_name,
-                email: req.body.email,
-                mobile: req.body.mobile,
-                hear_about_us: req.body.hear_about_us,
-                questions: req.body.questions,
+                first_name: req.first_name,
+                last_name: req.last_name,
+                email: req.email,
+                mobile: req.mobile,
+                hear_about_us: req.hear_about_us,
+                questions: req.questions,
                 lastLoginTime: new Date().getTime()
             })
             parentObj = await newParent.save();

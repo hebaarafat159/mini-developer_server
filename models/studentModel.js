@@ -10,8 +10,6 @@ const userSchema = new Schema({
     program_type: { type: String },
     email: { type: String },
     mobile: { type: String },
-    hear_about_us: { type: String },
-    questions: { type: String },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,

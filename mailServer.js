@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer'
 
 export default {
     sendRegistrationEmail,
+    sendMessageEmail
 }
 
 const transporter = nodemailer.createTransport({
@@ -46,29 +47,24 @@ function sendRegistrationEmail(registration) {
 }
 
 function sendMessageEmail(messageData) {
-    // const subjectText = `[Test Mini Developer] ${(messageData.courseObj) ? registration.courseObj.title : 'New Registration'}`
-    // const mailText = ` Child Name: ${registration.studentObj.first_name} ${registration.studentObj.last_name}
-    //     \n Parent Name: ${registration.parentObj.first_name} ${registration.parentObj.last_name}
-    //     \n Email: ${registration.parentObj.email}
-    //     \n Mobile Number: ${registration.parentObj.mobile}
-    //     \n Child's Age: ${registration.studentObj.age}
-    //     \n Has Computer: ${(registration.studentObj.hasComputer) ? 'Yes' : 'No'}
-    //     \n Programe Type: ${registration.program_type}
-    //     ${(registration.program_type && registration.program_type === 'In Person') ? `\n Preffered Region: ${registration.regionObj.name}` : ''}
-    //     ${(registration.classroomObj && registration.classroomObj.place_id) ? `\n Preffered Location: ${registration.classroomObj.place_id.name}` : ''}
-    //     \n Questions: ${registration.parentObj.questions}`
-    // const mailOptions = {
-    //     from: registration.parentObj.email,
-    //     to: process.env.APP_NODE_CLIENT_SIDE_TO_EMAIL_ADDRESS,
-    //     subject: subjectText,
-    //     text: mailText,
-    // };
+    const subjectText = `[Test Mini Developer] ${(messageData.subject)}`
+    const mailText = `Name: ${messageData.name} 
+        \n Phone: ${messageData.phone}
+        \n Email: ${messageData.email} 
+        \n Messager: ${messageData.message}`
 
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //     if (error) {
-    //         console.error("Error sending email: ", error);
-    //     } else {
-    //         console.log("Email sent: ", info.response);
-    //     }
-    // });
+    const mailOptions = {
+        from: messageData.email,
+        to: process.env.APP_NODE_CLIENT_SIDE_TO_EMAIL_ADDRESS,
+        subject: subjectText,
+        text: mailText,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("Error sending email: ", error);
+        } else {
+            console.log("Email sent: ", info.response);
+        }
+    });
 }

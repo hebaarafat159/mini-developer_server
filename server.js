@@ -8,6 +8,7 @@ import parentsRouter from './routers/parents.js'
 import studentsRouter from './routers/students.js'
 import classroomsRouter from './routers/classrooms.js'
 import locationsRouter from './routers/locations.js'
+import userRouter from './routers/user.js';
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use("/parents", parentsRouter);
 app.use("/students", studentsRouter);
 app.use("/classrooms", classroomsRouter);
 app.use("/locations", locationsRouter);
-
+app.use("/users", userRouter);
 const port = process.env.PORT || 4000;
 
 app.listen(port, () => {

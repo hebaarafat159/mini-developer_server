@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 });
 
 function sendRegistrationEmail(registration) {
-    const subjectText = `[Test Mini Developer Registration] ${(registration.courseObj) ? registration.courseObj.title : 'New Registration'}`
+    const subjectText = `[Test Mini Developer Registration] ${registration.studentObj.first_name} ${registration.studentObj.last_name} ${(registration.courseObj) ? registration.courseObj.title : 'New Registration'}`
     const mailText = ` Child Name: ${registration.studentObj.first_name} ${registration.studentObj.last_name} 
         \n Parent Name: ${registration.parentObj.first_name} ${registration.parentObj.last_name} 
         \n Email: ${registration.parentObj.email} 
@@ -32,6 +32,7 @@ function sendRegistrationEmail(registration) {
         \n Questions: ${registration.parentObj.questions}`
     const mailOptions = {
         from: registration.parentObj.email,
+        replyTo: registration.parentObj.email,
         to: process.env.APP_NODE_CLIENT_SIDE_TO_EMAIL_ADDRESS,
         subject: subjectText,
         text: mailText,

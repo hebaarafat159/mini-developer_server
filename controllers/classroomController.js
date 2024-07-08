@@ -34,7 +34,6 @@ function retrunResponse(status, body, message) {
 async function register(req, res) {
     try {
         // save or returun parent object
-        // console.log(`Parent Object : ${req.body.parentData}`)
         const parent = await parentController.addParent(req.body.parentData)
         // console.log(`Parent Object : ${parent}`)
 
@@ -109,25 +108,26 @@ async function saveRegistration(regisObj) {
     registrationObject = await Requests.findOne({
         "parent_id": regisObj.parentObj._id,
         "student_id": regisObj.studentObj._id,
-        "course_id": regisObj.courseObj ? regisObj.courseObj._id : '',
-        "classroom_id": regisObj.classroomObj ? regisObj.classroomObj._id : '',
-        "region_id": regisObj.regionObj ? regisObj.regionObj._id : '',
+        "course_id": regisObj.courseObj ? regisObj.courseObj._id : undefined,
+        "classroom_id": regisObj.classroomObj ? regisObj.classroomObj._id : undefined,
+        "region_id": regisObj.regionObj ? regisObj.regionObj._id : undefined,
     })
     console.log(`registrationObject : ${registrationObject}`);
 
     // case of new ristration
     if (registrationObject === null) {
-        const newRequest = new Requests({
+        registrationObject = new Requests({
             "parent_id": regisObj.parentObj._id,
             "student_id": regisObj.studentObj._id,
-            "course_id": regisObj.courseObj !== null ? regisObj.courseObj._id : '',
-            "classroom_id": regisObj.classroomObj !== null ? regisObj.classroomObj._id : '',
-            "region_id": regisObj.regionObj !== null ? regisObj.regionObj._id : '',
             "program_type": regisObj.program_type,
             "lastLoginTime": new Date().getTime()
         })
-        registrationObject = await newRequest.save()
-        // .populate(['course_id', 'student_id', 'parent_id', 'region_id', 'classroom_id']);
+        // add forign keys objects to new request object
+        if (regisObj.courseObj !== null && regisObj.courseObj !== undefined) registrationObject['course_id'] = regisObj.courseObj._id//{ ...registrationObject, "course_id": regisObj.courseObj._id }
+        if (regisObj.classroomObj !== null && regisObj.classroomObj !== undefined) registrationObject['classroom_id'] = regisObj.classroomObj._id //{ ...registrationObject, "classroom_id": regisObj.classroomObj._id }
+        if (regisObj.regionObj !== null && regisObj.regionObj !== undefined) registrationObject['region_id'] = regisObj.regionObj._id //{ ...registrationObject, "region_id": regisObj.regionObj._id }
+
+        registrationObject = await registrationObject.save()
         console.log(`saved registrationObject : ${registrationObject}`);
     }
 

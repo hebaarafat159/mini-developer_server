@@ -20,19 +20,16 @@ const userSchema = new Schema({
     {
         type: mongoose.Schema.Types.ObjectId,
         required: false,
-        default: "",
         ref: 'regions'
     },
     course_id: {
         type: mongoose.Schema.Types.ObjectId,
         required: false,
-        default: "",
         ref: 'courses'
     },
     classroom_id: {
         type: mongoose.Schema.Types.ObjectId,
         required: false,
-        default: "",
         ref: 'classrooms'
     },
     title: { type: String, default: "" },

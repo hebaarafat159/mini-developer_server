@@ -54,7 +54,8 @@ function sendMessageEmail(messageData) {
         \n Messager: ${messageData.message}`
 
     const mailOptions = {
-        from: messageData.email,
+        from: `"${messageData.name}" <${messageData.email}>`,
+        replyTo: messageData.email,
         to: process.env.APP_NODE_CLIENT_SIDE_TO_EMAIL_ADDRESS,
         subject: subjectText,
         text: mailText,

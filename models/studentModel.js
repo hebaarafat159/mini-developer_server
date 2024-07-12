@@ -8,6 +8,12 @@ const userSchema = new Schema({
     has_computer: { type: Boolean, required: true, default: true },
     email: { type: String },
     mobile: { type: String },
+    is_social_allowed: { type: Boolean, required: true, default: false },
+    is_local_allowed: { type: Boolean, required: true, default: false },
+    medical_condition: { type: String },
+    emergency_contact_name: { type: String },
+    Emergency_contact_phone_number: { type: String },
+    comment: { type: String },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,

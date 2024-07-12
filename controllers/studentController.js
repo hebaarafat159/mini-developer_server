@@ -99,7 +99,8 @@ async function getStudents(req, res) {
 
 async function getStudent(req, res) {
     try {
-        let studentObject = await Student.findById({ "_id": req.params._id })
+        console.log("ID: " + req.params.id);
+        let studentObject = await Student.findOne({ "_id": req.params.id }).populate(['parent_id'])
         res.send(retrunResponse(200, studentObject, ""));
     } catch (error) {
         console.log("Error" + error);

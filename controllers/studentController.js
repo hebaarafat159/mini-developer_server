@@ -68,16 +68,21 @@ async function saveStudent(req, res) {
 
 async function updateStudent(req, res) {
     try {
-        const studentObj = await Student.findOneAndUpdate({ "_id": req.params._id }, {
-            "first_name": req.body.first_name,
-            "last_name": req.body.last_name,
-            "age": req.body.age,
-            "hasComputer": req.body.hasComputer,
-            "mobile": req.body.mobile,
-            "hear_about_us": req.body.hear_about_us,
-            "questions": req.body.questions,
-            "lastLoginTime": new Date().getTime()
+        const studentObj = await Student.findOneAndUpdate({ "_id": req.params.id }, {
+            'first_name': req.body.first_name,
+            'last_name': req.body.last_name,
+            'age': req.body.age,
+            'has_computer': req.body.hasComputer,
+            'mobile': req.body.mobile,
+            'is_social_allowed': req.body.is_social_allowed,
+            'is_local_allowed': req.body.is_local_allowed,
+            'medical_condition': req.body.medical_condition,
+            'emergency_contact_name': req.body.emergency_contact_name,
+            'emergency_contact_phone_number': req.body.emergency_contact_phone_number,
+            'comment': req.body.comment,
+            'lastLoginTime': new Date().getTime()
         })
+        // console.log(`Update STudent: ${JSON.stringify(studentObj)}`);
         await studentObj.save();
         res.send(retrunResponse(200, studentObj, ""));
     } catch (error) {
@@ -99,7 +104,7 @@ async function getStudents(req, res) {
 
 async function getStudent(req, res) {
     try {
-        console.log("ID: " + req.params.id);
+        // console.log("ID: " + req.params.id);
         let studentObject = await Student.findOne({ "_id": req.params.id }).populate(['parent_id'])
         res.send(retrunResponse(200, studentObject, ""));
     } catch (error) {

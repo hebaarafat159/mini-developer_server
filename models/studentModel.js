@@ -12,7 +12,7 @@ const userSchema = new Schema({
     is_local_allowed: { type: Boolean, required: true, default: false },
     medical_condition: { type: String },
     emergency_contact_name: { type: String },
-    Emergency_contact_phone_number: { type: String },
+    emergency_contact_phone_number: { type: String },
     comment: { type: String },
     parent_id:
     {

@@ -10,10 +10,10 @@ const userSchema = new Schema({
     mobile: { type: String },
     is_social_allowed: { type: Boolean, required: true, default: false },
     is_local_allowed: { type: Boolean, required: true, default: false },
-    medical_condition: { type: String },
-    emergency_contact_name: { type: String },
-    emergency_contact_phone_number: { type: String },
-    comment: { type: String },
+    medical_condition: { type: String, default: '' },
+    emergency_contact_name: { type: String, default: '' },
+    emergency_contact_phone_number: { type: String, default: '' },
+    comment: { type: String, default: '' },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,

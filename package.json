@@ -12,7 +12,6 @@
   "dependencies": {
     "@netlify/functions": "^2.3.0",
     "@types/express": "^4.17.19",
-    "@vue/cli": "^5.0.8",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

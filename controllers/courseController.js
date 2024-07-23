@@ -28,17 +28,32 @@ function retrunResponse(status, body, message) {
 }
 
 async function saveCourse(req, res) {
-    const courseTitle = req.body.title;
-
     try {
+        const courseTitle = req.body.title;
+        let pre_courses = req.body.prerequisite_courses
+        if (pre_courses !== null && pre_courses !== undefined && pre_courses.length > 0) {
+            const students = await Promise.all(pre_courses.map(async (pre_course) => {
+                return await Course.findOne({ '_id': pre_course._id });
+            }));
+        }
         // case of new course
         if (await Course.count({ "title": courseTitle }) === 0) {
             // save new course
             const newCourse = new Course({
                 title: req.body.title,
+                slogan: req.body.slogan,
                 age: req.body.age,
                 language: req.body.language,
-                cover: req.body.image,
+                cover_image: req.body.cover_image,
+                course_duration: req.body.course_duration,
+                total_session_duration: req.body.total_session_duration,
+                total_price: req.body.total_price,
+                type: req.body.type,// In-person or online
+                prerequisite_courses: pre_courses, // saved courses objectIds
+                description: req.body.description,
+                course_subjects: req.body.course_subjects,
+                course_skills: req.body.course_skills,
+                levels: req.body.levels,
                 lastLoginTime: new Date().getTime()
             })
             const courseObj = await newCourse.save();
@@ -53,18 +68,19 @@ async function saveCourse(req, res) {
 async function updateCourse(req, res) {
     try {
         const courseObj = await Course.findOneAndUpdate({ "_id": req.params.id }, {
-            "title": req.body.title,
+            "slogan": req.body.slogan,
             "age": req.body.age,
             "language": req.body.language,
             "cover_image": req.body.cover_image,
-            "course_duration": req.body.duration, // How long the course will be running.
-            "session_duration": req.body.session_duration, // How long each session is.
-            "price": req.body.price,
+            "course_duration": req.body.course_duration,
+            "total_session_duration": req.body.total_session_duration,
+            "total_price": req.body.total_price,
             "type": req.body.type,// In-person or online
-            "prerequisite_courses": req.body.prerequisite_courses,
+            "prerequisite_courses": pre_courses, // saved courses objectIds
             "description": req.body.description,
             "course_subjects": req.body.course_subjects,
             "course_skills": req.body.course_skills,
+            "levels": req.body.levels,
             "lastLoginTime": new Date().getTime(),
         })
         await courseObj.save();
@@ -78,7 +94,7 @@ async function updateCourse(req, res) {
 async function getCourses(req, res) {
     try {
         const filter = {};
-        let courses = await Course.find(filter);//.populate("parent_cat");
+        let courses = await Course.find(filter).populate(["prerequisite_courses"]);
         res.send(retrunResponse(200, courses, ''));
     } catch (error) {
         console.log("Error" + error);
@@ -88,7 +104,7 @@ async function getCourses(req, res) {
 
 async function getCourse(req, res) {
     try {
-        let courseObject = await Course.findById({ "_id": req.params.id })
+        let courseObject = await Course.findOne({ "_id": req.params.id })
         res.send(retrunResponse(200, courseObject, ""));
     } catch (error) {
         console.log("Error" + error);
@@ -98,7 +114,7 @@ async function getCourse(req, res) {
 
 async function getCourseById(courseId) {
     try {
-        let courseObject = await Course.findById({ "_id": courseId })
+        let courseObject = await Course.findOne({ "_id": courseId })
         return courseObject
     } catch (error) {
         console.log("Error" + error);

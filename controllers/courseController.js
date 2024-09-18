@@ -31,11 +31,21 @@ async function saveCourse(req, res) {
     try {
         const courseTitle = req.body.title;
         let pre_courses = req.body.prerequisite_courses
+        // get all prerequisite courses
         if (pre_courses !== null && pre_courses !== undefined && pre_courses.length > 0) {
             const students = await Promise.all(pre_courses.map(async (pre_course) => {
                 return await Course.findOne({ '_id': pre_course._id });
             }));
         }
+
+        // get all courses level
+        let levels_courses = req.body.levels
+        if (levels_courses !== null && levels_courses !== undefined && levels_courses.length > 0) {
+            const students = await Promise.all(levels_courses.map(async (levels_course) => {
+                return await Course.findOne({ '_id': levels_course._id });
+            }));
+        }
+
         // case of new course
         if (await Course.count({ "title": courseTitle }) === 0) {
             // save new course
@@ -53,7 +63,7 @@ async function saveCourse(req, res) {
                 description: req.body.description,
                 course_subjects: req.body.course_subjects,
                 course_skills: req.body.course_skills,
-                levels: req.body.levels,
+                levels: levels_courses, // save levels objectsIds
                 lastLoginTime: new Date().getTime()
             })
             const courseObj = await newCourse.save();
@@ -94,7 +104,7 @@ async function updateCourse(req, res) {
 async function getCourses(req, res) {
     try {
         const filter = {};
-        let courses = await Course.find(filter).populate(["prerequisite_courses"]);
+        let courses = await Course.find(filter).where({ "periority": 0 }).populate(["prerequisite_courses","levels"]);
         res.send(retrunResponse(200, courses, ''));
     } catch (error) {
         console.log("Error" + error);

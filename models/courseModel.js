@@ -22,23 +22,12 @@ const courseSchema = new Schema({
     description: { type: String },
     course_subjects: { type: Array },
     course_skills: { type: Array },
-    levels: [
+    levels:  [
         {
-            position: { type: Number },
-            title: { type: String, required: true },
-            description: { type: String },
-            course_duration: { type: Number },
-            session_duration: { type: Number },
-            price: { type: Number },
-            parts: { type: Number, default: 1 },
-            course_skills:
-            {
-                icon: { type: String, default: '' },
-                text: { type: String, default: '' }
-            },
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'courses'
         }
     ],
-
     lastLoggedinTime:
     {
         type: Number,

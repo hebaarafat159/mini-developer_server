@@ -114,7 +114,7 @@ async function getCourses(req, res) {
 
 async function getCourse(req, res) {
     try {
-        let courseObject = await Course.findOne({ "_id": req.params.id })
+        let courseObject = await Course.findOne({ "_id": req.params.id }).populate(["prerequisite_courses","levels"]);
         res.send(retrunResponse(200, courseObject, ""));
     } catch (error) {
         console.log("Error" + error);

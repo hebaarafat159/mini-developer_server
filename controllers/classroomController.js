@@ -33,9 +33,10 @@ function retrunResponse(status, body, message) {
 
 async function register(req, res) {
     try {
+
         // save or returun parent object
         const parent = await parentController.addParent(req.body.parentData)
-        // console.log(`Parent Object : ${parent}`)
+        // console.log(`Request Object : ${req.body}`)
 
         if (parent !== null) {
 
@@ -76,8 +77,15 @@ async function register(req, res) {
                     }
 
                     // save each students
-                    const registerations = await Promise.all(students.map(async (student) => {
+                    const registerations = await Promise.all(students.map(async (student, index) => {
                         console.log(`Student : ${student}`)
+                        // add course level to request object
+                        if (student.course_level !== null && student.course_level !== '') {
+                            let leveObject = await courseController.getCourseById(req.body.children[index].course_level._id)
+                            requestObject = { ...requestObject, leveObject: leveObject }
+                            console.log(`level_id ID : ${JSON.stringify(requestObject)}`)
+                        }
+
                         // add student to request object
                         requestObject = { ...requestObject, studentObj: student }
                         const registration = await saveRegistration(requestObject)
@@ -111,6 +119,7 @@ async function saveRegistration(regisObj) {
         "course_id": regisObj.courseObj ? regisObj.courseObj._id : undefined,
         "classroom_id": regisObj.classroomObj ? regisObj.classroomObj._id : undefined,
         "region_id": regisObj.regionObj ? regisObj.regionObj._id : undefined,
+        "level_id": regisObj.leveObject ? regisObj.leveObject._id : undefined
     })
     console.log(`registrationObject : ${registrationObject}`);
 
@@ -123,9 +132,10 @@ async function saveRegistration(regisObj) {
             "lastLoginTime": new Date().getTime()
         })
         // add forign keys objects to new request object
-        if (regisObj.courseObj !== null && regisObj.courseObj !== undefined) registrationObject['course_id'] = regisObj.courseObj._id//{ ...registrationObject, "course_id": regisObj.courseObj._id }
-        if (regisObj.classroomObj !== null && regisObj.classroomObj !== undefined) registrationObject['classroom_id'] = regisObj.classroomObj._id //{ ...registrationObject, "classroom_id": regisObj.classroomObj._id }
-        if (regisObj.regionObj !== null && regisObj.regionObj !== undefined) registrationObject['region_id'] = regisObj.regionObj._id //{ ...registrationObject, "region_id": regisObj.regionObj._id }
+        if (regisObj.courseObj !== null && regisObj.courseObj !== undefined) registrationObject['course_id'] = regisObj.courseObj._id
+        if (regisObj.classroomObj !== null && regisObj.classroomObj !== undefined) registrationObject['classroom_id'] = regisObj.classroomObj._id
+        if (regisObj.regionObj !== null && regisObj.regionObj !== undefined) registrationObject['region_id'] = regisObj.regionObj._id
+        if (regisObj.leveObject !== null && regisObj.leveObject !== undefined) registrationObject['level_id'] = regisObj.leveObject._id
 
         registrationObject = await registrationObject.save()
         console.log(`saved registrationObject : ${registrationObject}`);

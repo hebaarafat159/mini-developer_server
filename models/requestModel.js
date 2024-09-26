@@ -33,6 +33,11 @@ const userSchema = new Schema({
         ref: 'classrooms'
     },
     title: { type: String, default: "" },
+    level_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: 'courses'
+    },
     lastLoggedinTime:
     {
         type: Number,

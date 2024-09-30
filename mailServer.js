@@ -29,8 +29,10 @@ function sendRegistrationEmail(registration) {
         \n Programe Type: ${registration.program_type}
         ${(registration.program_type && registration.program_type === 'In Person') ? `\n Preffered Region: ${registration.regionObj.name}` : ''}
         ${(registration.classroomObj && registration.classroomObj.place_id) ? `\n Preffered Location: ${registration.classroomObj.place_id.name}` : ''}
+        \n ${(registration.leveObject) ? `\n Child level: ${registration.leveObject.title}` : ''}
         \n Questions: ${registration.parentObj.questions}
         \n Consent Form: ${process.env.APP_NODE_URL}/students/${registration.studentObj._id}`
+    console.log(`Email text :   ${mailText}`)
     const mailOptions = {
         from: registration.parentObj.email,
         replyTo: registration.parentObj.email,

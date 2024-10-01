@@ -6,6 +6,7 @@ mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
     getTestimonials,
+    getLatestTestimonials,
     saveTestimonial,
     getTestimonialsByDate
 }
@@ -26,6 +27,17 @@ function retrunResponse(status, body, message) {
 }
 
 async function getTestimonials(req, res) {
+    try {
+        console.log("get getTestimonials")
+        let testimonials = await Testimonial.find({})//.populate("parent_id", "student_id");
+        res.send(retrunResponse(200, testimonials, 'Hello there'));
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
+
+async function getLatestTestimonials(req, res) {
     try {
         console.log("get getTestimonials")
         let testimonials = await Testimonial.find({})//.populate("parent_id", "student_id");

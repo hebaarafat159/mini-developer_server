@@ -30,6 +30,11 @@ courseRouter.get('/testimonials', async (req, res) => {
     testimonialController.getTestimonials(req, res);
 })
 
+courseRouter.get('/latesttestimonials', async (req, res) => {
+    testimonialController.getLatestTestimonials(req, res);
+})
+
+
 // save new testimonials to database 
 courseRouter.post('/testimonials/add', async (req, res) => {
     await testimonialController.saveTestimonial(req, res);

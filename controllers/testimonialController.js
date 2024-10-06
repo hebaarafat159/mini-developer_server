@@ -29,7 +29,7 @@ function retrunResponse(status, body, message) {
 async function getTestimonials(req, res) {
     try {
         console.log("get getTestimonials")
-        let testimonials = await Testimonial.find({})//.populate("parent_id", "student_id");
+        let testimonials = await Testimonial.find({}).sort(([['date', 'asc']]))//.populate("parent_id", "student_id");
         res.send(retrunResponse(200, testimonials, 'Hello there'));
     } catch (error) {
         console.log("Error" + error);
@@ -40,7 +40,7 @@ async function getTestimonials(req, res) {
 async function getLatestTestimonials(req, res) {
     try {
         console.log("get getTestimonials")
-        let testimonials = await Testimonial.find({})//.populate("parent_id", "student_id");
+        let testimonials = await Testimonial.find({}).sort(([['date', 'asc']])).limit(5)//.populate("parent_id", "student_id");
         res.send(retrunResponse(200, testimonials, 'Hello there'));
     } catch (error) {
         console.log("Error" + error);

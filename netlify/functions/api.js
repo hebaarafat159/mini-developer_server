@@ -7,6 +7,7 @@ import parentsRouter from '../../routers/parents.js'
 import studentsRouter from '../../routers/students.js'
 import classroomsRouter from '../../routers/classrooms.js'
 import userRouter from "../../routers/user.js";
+import testmonialRouter from './routers/testimonials.js'
 const api = express();
 
 const router = Router();
@@ -21,5 +22,6 @@ api.use("/api/parents", parentsRouter);
 api.use("/api/students", studentsRouter);
 api.use("/api/classrooms", classroomsRouter);
 app.use("/api/users", userRouter);
+app.use("/api/testmonials", testmonialRouter);
 
 export const handler = serverless(api);

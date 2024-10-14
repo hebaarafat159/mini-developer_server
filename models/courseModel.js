@@ -13,6 +13,9 @@ const courseSchema = new Schema({
     session_duration: { type: Number }, // How long each session is.
     price: { type: Number },
     type: { type: Array },// In-person or online
+    seo_slug: { type: String, default: '' },
+    seo_title: { type: String, default: '' },
+    seo_description: { type: String, default: '' },
     prerequisite_courses: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +25,7 @@ const courseSchema = new Schema({
     description: { type: String },
     course_subjects: { type: Array },
     course_skills: { type: Array },
-    levels:  [
+    levels: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'courses'

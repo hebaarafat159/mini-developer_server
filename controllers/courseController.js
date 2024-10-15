@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import Course from '../models/courseModel.js';
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
-
+const ObjectId = mongoose.Types.ObjectId;
 export default {
     saveCourse,
     getCourse,
@@ -104,7 +104,7 @@ async function updateCourse(req, res) {
 async function getCourses(req, res) {
     try {
         const filter = {};
-        let courses = await Course.find(filter).where({ "periority": 0 }).populate(["prerequisite_courses","levels"]);
+        let courses = await Course.find(filter).where({ "periority": 0 }).populate(["prerequisite_courses", "levels"]);
         res.send(retrunResponse(200, courses, ''));
     } catch (error) {
         console.log("Error" + error);
@@ -114,7 +114,23 @@ async function getCourses(req, res) {
 
 async function getCourse(req, res) {
     try {
-        let courseObject = await Course.findOne({ "_id": req.params.id }).populate(["prerequisite_courses","levels"]);
+        console.log(`Course Object : ${req.params.id}`);
+        let courseObject;
+        if (ObjectId.isValid(req.params.id)) {
+            // If valid ObjectId, search by _id or seo_slug
+            courseObject = await Course.findOne({
+                $or: [
+                    { _id: req.params.id },
+                    { seo_slug: req.params.id },
+                ]
+            }).populate(["prerequisite_courses", "levels"]);
+        } else {
+            // If not a valid ObjectId, only search by seo_slug
+            courseObject = await Course.findOne({
+                seo_slug: req.params.id
+            }).populate(["prerequisite_courses", "levels"]);
+        }
+        // console.log(`Course Object : ${JSON.stringify(courseObject)}`);
         res.send(retrunResponse(200, courseObject, ""));
     } catch (error) {
         console.log("Error" + error);

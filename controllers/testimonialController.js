@@ -28,7 +28,7 @@ function retrunResponse(status, body, message) {
 
 async function getTestimonials(req, res) {
     try {
-        console.log("get getTestimonials")
+        // console.log("get getTestimonials")
         let testimonials = await Testimonial.find({}).sort(([['date', 'asc']]))//.populate("parent_id", "student_id");
         res.send(retrunResponse(200, testimonials, 'Hello there'));
     } catch (error) {
@@ -39,7 +39,7 @@ async function getTestimonials(req, res) {
 
 async function getLatestTestimonials(req, res) {
     try {
-        console.log("get getTestimonials")
+        // console.log("get getTestimonials")
         let testimonials = await Testimonial.find({}).sort(([['date', 'asc']])).limit(5)//.populate("parent_id", "student_id");
         res.send(retrunResponse(200, testimonials, 'Hello there'));
     } catch (error) {
@@ -72,7 +72,7 @@ async function saveTestimonial(req, res) {
         if (testimonialObject.courseObj !== null && testimonialObject.courseObj !== undefined) testimonialObject['course_id'] = testimonialObject.courseObj._id
 
         testimonialObject = await testimonialObject.save()
-        console.log(`saved testimonialObject : ${testimonialObject}`);
+        // console.log(`saved testimonialObject : ${testimonialObject}`);
         res.send(retrunResponse(200, testimonialObject, ""));
     } catch (error) {
         console.log("Error" + error);

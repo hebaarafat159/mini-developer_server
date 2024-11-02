@@ -4,6 +4,7 @@ import Student from '../models/studentModel.js';
 import parentController from './parentController.js';
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
+const ObjectId = mongoose.Types.ObjectId;
 
 export default {
     saveStudent,
@@ -63,7 +64,7 @@ async function addStudent(student, parentObject) {
 
                 // update saved student object with student slug
                 var updatedObject = await Student.findOneAndUpdate({ '_id': studentObject._id }, { 'slug': slug })
-                if(updatedObject!==null) studentObject['slug'] = slug
+                if (updatedObject !== null) studentObject['slug'] = slug
             }
             // console.log(`Add STudent Object: ${studentObject}`);
         }
@@ -126,8 +127,23 @@ async function getStudents(req, res) {
 
 async function getStudent(req, res) {
     try {
-        // console.log("ID: " + req.params.id);
-        let studentObject = await Student.findOne({ "_id": req.params.id }).populate(['parent_id'])
+        // console.log(`student conset form id: ${req.params.id}`)
+        let studentObject;
+        if (ObjectId.isValid(req.params.id)) {
+            // If valid ObjectId, search by _id or seo_slug
+            studentObject = await Student.findOne({
+                $or: [
+                    { _id: req.params.id },
+                    { slug: req.params.id },
+                ]
+            }).populate(['parent_id'])
+        } else {
+            // If not a valid ObjectId, only search by seo_slug
+            studentObject = await Student.findOne({
+                slug: req.params.id
+            }).populate(['parent_id'])
+        }
+        // console.log(`Student Object : ${JSON.stringify(courseObject)}`);
         res.send(retrunResponse(200, studentObject, ""));
     } catch (error) {
         console.log("Error" + error);

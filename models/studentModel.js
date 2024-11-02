@@ -14,6 +14,7 @@ const userSchema = new Schema({
     emergency_contact_name: { type: String, default: '' },
     emergency_contact_phone_number: { type: String, default: '' },
     comment: { type: String, default: '' },
+    slug: { type: String, default: '' },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,

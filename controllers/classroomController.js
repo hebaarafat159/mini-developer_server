@@ -42,6 +42,7 @@ async function register(req, res) {
 
             // save or return student object
             if (req.body.children && req.body.children.length > 0) {
+                // add students to database
                 const students = await Promise.all(req.body.children.map(async (child) => {
                     // adding parent_id,program_type and preffered_location for each student object
                     child.parent_id = parent
@@ -76,7 +77,7 @@ async function register(req, res) {
                         requestObject = { ...requestObject, classroomObj: classroomObject }
                     }
 
-                    // save each students
+                    // save each students' requests 
                     const registerations = await Promise.all(students.map(async (student, index) => {
                         console.log(`Student : ${student}`)
                         // add course level to request object

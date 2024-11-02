@@ -28,11 +28,25 @@ function retrunResponse(status, body, message) {
     };
 }
 
+async function generateStudentSlug(studentObject) {
+    console.log(`saved Student Slug ID: ${studentObject._id.toString()}`);
+    const max = studentObject._id.toString().length
+    console.log(`saved Student Slug ID: ${max}`);
+    var startIndex = Math.floor(Math.random() * max)
+    var endIndex = Math.floor(Math.random() * max)
+    while (startIndex >= endIndex) {
+        var startIndex = Math.floor(Math.random() * max)
+        var endIndex = Math.floor(Math.random() * max)
+    }
+    var subIndex = studentObject._id.toString().substring(startIndex, endIndex)
+    var slug = `${studentObject.first_name}-${studentObject.last_name}-${subIndex}`
+    console.log(`saved Student Slug: ${slug}`);
+    return slug.toString()
+}
+
 async function addStudent(student, parentObject) {
     let studentObject = null
     try {
-        // student.parent_id = parentObject
-
         studentObject = await Student.findOne({
             "parent_id": parentObject._id,
             "first_name": student.first_name,
@@ -41,9 +55,17 @@ async function addStudent(student, parentObject) {
 
         if (studentObject === null) {
             const newStudent = new Student(student)
-            console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)
+            // console.log(`Add STudent object : ${JSON.stringify(newStudent)} \n\n`)
             studentObject = await newStudent.save();
-            // console.log(`saved Student Object: ${studentObject}`);
+            // create student slug and update student object with it
+            if (studentObject !== null) {
+                var slug = await generateStudentSlug(studentObject)
+
+                // update saved student object with student slug
+                var updatedObject = await Student.findOneAndUpdate({ '_id': studentObject._id }, { 'slug': slug })
+                if(updatedObject!==null) studentObject['slug'] = slug
+            }
+            // console.log(`Add STudent Object: ${studentObject}`);
         }
 
     } catch (error) {

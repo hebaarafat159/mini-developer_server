@@ -32,6 +32,7 @@ const userSchema = new Schema({
         required: false,
         ref: 'classrooms'
     },
+    other_region: { type: String, default: "" },
     title: { type: String, default: "" },
     level_id: {
         type: mongoose.Schema.Types.ObjectId,

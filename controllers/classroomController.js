@@ -120,6 +120,7 @@ async function saveRegistration(regisObj) {
         "course_id": regisObj.courseObj ? regisObj.courseObj._id : undefined,
         "classroom_id": regisObj.classroomObj ? regisObj.classroomObj._id : undefined,
         "region_id": regisObj.regionObj ? regisObj.regionObj._id : undefined,
+        "other_region": regisObj.other_region,
         "level_id": regisObj.leveObject ? regisObj.leveObject._id : undefined
     })
     console.log(`registrationObject : ${registrationObject}`);

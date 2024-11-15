@@ -96,6 +96,7 @@ async function updateStudent(req, res) {
             'last_name': req.body.last_name,
             'age': req.body.age,
             'has_computer': req.body.hasComputer,
+            'has_lessons_before': req.body.has_lessons_before,
             'mobile': req.body.mobile,
             'is_social_allowed': req.body.is_social_allowed,
             'is_local_allowed': req.body.is_local_allowed,

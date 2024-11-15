@@ -36,7 +36,7 @@ async function register(req, res) {
 
         // save or returun parent object
         const parent = await parentController.addParent(req.body.parentData)
-        // console.log(`Request Object : ${req.body}`)
+        console.log(`Request Object : ${JSON.stringify(req.body)}`)
 
         if (parent !== null) {
 
@@ -54,9 +54,11 @@ async function register(req, res) {
 
                 // save or update requests bject
                 if (students && students.length > 0) {
+                    // add generale data in each request object for each student
                     let requestObject = {
                         parentObj: parent,
-                        program_type: req.body.program_type
+                        program_type: req.body.program_type,
+                        other_region: req.body.other_region
                     }
 
                     // get region object from database
@@ -131,6 +133,7 @@ async function saveRegistration(regisObj) {
             "parent_id": regisObj.parentObj._id,
             "student_id": regisObj.studentObj._id,
             "program_type": regisObj.program_type,
+            "other_region": regisObj.other_region,
             "lastLoginTime": new Date().getTime()
         })
         // add forign keys objects to new request object

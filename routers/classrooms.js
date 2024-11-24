@@ -16,4 +16,7 @@ classroomRouter.get('/places/:regionId/:courseId', async (req, res) => {
     await classroomController.getCoursePlaces(req, res);
 })
 
+classroomRouter.get('/termdates/:year', async (req, res) => {
+    await classroomController.getTermDates(req, res);
+})
 export default classroomRouter;

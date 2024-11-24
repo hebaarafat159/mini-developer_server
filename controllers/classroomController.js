@@ -7,13 +7,15 @@ import mailServer from '../mailServer.js';
 import Requests from '../models/requestModel.js';
 import Classroom from '../models/classroomModel.js';
 import locationController from './locationController.js';
+import TermDates from '../models/termDatesModel.js';
 
 mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
     register,
     getCoursePlaces,
-    saveClassroom
+    saveClassroom,
+    getTermDates
 }
 
 /**
@@ -31,6 +33,12 @@ function retrunResponse(status, body, message) {
     };
 }
 
+/**
+ * Begin the process of enrolling a child in a course by saving the parent and child information if not already existing
+ , then proceed to store the remaining request details.
+ * @param {*} req 
+ * @param {*} res 
+ */
 async function register(req, res) {
     try {
 
@@ -112,6 +120,11 @@ async function register(req, res) {
     }
 }
 
+/**
+ * Store the request to register a child in a course in the database.
+ * @param {*} regisObj 
+ * @returns 
+ */
 async function saveRegistration(regisObj) {
     let registrationObject = null
     console.log(`regisObj : ${JSON.stringify(regisObj)}`);
@@ -149,6 +162,11 @@ async function saveRegistration(regisObj) {
     return registrationObject
 }
 
+/**
+ * List all locations where a specific course is held.
+ * @param {*} req 
+ * @param {*} res 
+ */
 async function getCoursePlaces(req, res) {
     try {
         let palces = await Classroom.find({ 'course_id': req.params.courseId, 'region_id': req.params.regionId })
@@ -160,6 +178,11 @@ async function getCoursePlaces(req, res) {
     }
 }
 
+/**
+ * Set up a classroom for in-person sessions if it's not exist, specifying the locations and times. 
+ * @param {*} req 
+ * @param {*} res 
+ */
 async function saveClassroom(req, res) {
     try {
         let classroom = await Classroom.findOne({ '_id': req.body._id });
@@ -191,6 +214,16 @@ async function saveClassroom(req, res) {
         } else {
             res.send(retrunResponse(200, classroom, ""));
         }
+    } catch (error) {
+        console.log("Error" + error);
+        res.send(retrunResponse(error.code, null, error.name));
+    }
+}
+
+async function getTermDates(req, res) {
+    try {
+        let termDates = await TermDates.find({ 'year': req.params.year });
+        res.send(retrunResponse(200, termDates, ''));
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));

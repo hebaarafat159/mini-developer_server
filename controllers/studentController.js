@@ -40,7 +40,9 @@ async function generateStudentSlug(studentObject) {
         var endIndex = Math.floor(Math.random() * max)
     }
     var subIndex = studentObject._id.toString().substring(startIndex, endIndex)
-    var slug = `${studentObject.first_name}-${studentObject.last_name}-${subIndex}`
+    var fname = studentObject.first_name.replace(/ /g, '-');
+    var lname = studentObject.last_name.replace(/ /g, '-');
+    var slug = `${fname}-${lname}-${subIndex}`
     console.log(`saved Student Slug: ${slug}`);
     return slug.toString()
 }

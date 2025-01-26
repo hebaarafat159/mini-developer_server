@@ -32,7 +32,8 @@ function sendRegistrationEmail(registration) {
         ${(registration.program_type && registration.program_type === 'In Person') ? `\n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_REGION_TEXT} ${registration.regionObj.name}` : ''}
         ${(registration.program_type && registration.program_type === 'In Person' && registration.regionObj.name === 'other') ? `\n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_OTHER_REGION_TEXT} ${registration.other_region}` : ''}
         ${(registration.classroomObj && registration.classroomObj.place_id) ? `\n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_LOCATION_TEXT} ${registration.classroomObj.place_id.name}` : ''}
-        ${(registration.leveObject) ? `\n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_LEVEL_TEXT} ${registration.leveObject.title}` : ''}
+        ${(registration.leveObject) ? `\n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_LEVEL_TEXT} ${registration.studentObj.has_lessons_before}` : ''}
+        \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_HEAR_ABOUT_US_TEXT} ${registration.parentObj.hear_about_us}
         \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_QUESTION_TEXT} ${registration.parentObj.questions}
         \n Consent Form: ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_CONSENT_FORM_TEXT}${registration.studentObj.slug}`
     console.log(`Email text :   ${mailText}`)

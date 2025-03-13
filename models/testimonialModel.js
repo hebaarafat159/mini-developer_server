@@ -3,6 +3,7 @@ import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
     text: { type: String, required: true },
+    person: { type: String, required: true,default:"H.A." },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,

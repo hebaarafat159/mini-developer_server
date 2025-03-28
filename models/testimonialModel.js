@@ -3,7 +3,8 @@ import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
     text: { type: String, required: true },
-    person: { type: String, required: true,default:"H.A." },
+    person: { type: String, required: true, default: "H.A." },
+    rate: { type: Number, require: true, default: 0 },
     parent_id:
     {
         type: mongoose.Schema.Types.ObjectId,
@@ -14,9 +15,9 @@ const userSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'students'
     },
-    course_id:
-    {
+    course_id: {
         type: mongoose.Schema.Types.ObjectId,
+        required: false,
         ref: 'courses'
     },
     date:

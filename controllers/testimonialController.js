@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import mongoose from "mongoose";
 import Testimonial from '../models/testimonialModel.js';
-
+import courseController from './courseController.js';
 mongoose.connect(`${process.env.DATABAE_URL}`);
 
 export default {
@@ -60,19 +60,25 @@ async function getTestimonialsByDate(req, res) {
 }
 
 async function saveTestimonial(req, res) {
+    // console.log(`start saving `);
     try {
+        let courseId = req.body.course._id;
+        console.log(`course id : ${courseId}`);
+        // load course object from database 
+        let courseObject = await courseController.getCourseById(courseId)
+
+        // save testimonial 
         let testimonialObject = new Testimonial({
+            date: new Date(),
             text: req.body.text,
-            date: new Date(req.body.date)
+            rate: req.body.rate,
+            person: req.body.person,
+            course_id: courseObject ? courseObject._id : courseId,
+
         })
 
-        // add forign keys objects to new request object
-        if (testimonialObject.parentObj !== null && testimonialObject.parentObj !== undefined) testimonialObject['parent_id'] = testimonialObject.parentObj._id
-        if (testimonialObject.studentObj !== null && testimonialObject.studentObj !== undefined) testimonialObject['student_id'] = testimonialObject.studentObj._id
-        if (testimonialObject.courseObj !== null && testimonialObject.courseObj !== undefined) testimonialObject['course_id'] = testimonialObject.courseObj._id
-
         testimonialObject = await testimonialObject.save()
-        // console.log(`saved testimonialObject : ${testimonialObject}`);
+        console.log(`saved testimonialObject : ${testimonialObject}`);
         res.send(retrunResponse(200, testimonialObject, ""));
     } catch (error) {
         console.log("Error" + error);

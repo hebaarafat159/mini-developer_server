@@ -4,7 +4,8 @@ import mongoose, { Schema } from "mongoose";
 const userSchema = new Schema({
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
-    age: { type: Number, required: true },
+    age: { type: Number},
+    dob: { type: String, required: true },
     has_computer: { type: Boolean, required: true, default: false },
     has_lessons_before: { type: Boolean, required: true, default: false },
     email: { type: String },

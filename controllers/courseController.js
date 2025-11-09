@@ -104,7 +104,7 @@ async function updateCourse(req, res) {
 async function getCourses(req, res) {
     try {
         const filter = {};
-        let courses = await Course.find(filter).where({ "periority": 0 }).populate(["prerequisite_courses", "levels"]);
+        let courses = await Course.find(filter).where({ "is_super": true }).populate(["prerequisite_courses", "levels"]);
         res.send(retrunResponse(200, courses, ''));
     } catch (error) {
         console.log("Error" + error);

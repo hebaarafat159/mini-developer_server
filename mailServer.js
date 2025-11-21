@@ -56,10 +56,10 @@ function sendRegistrationEmail(registration) {
 
 function sendMessageEmail(messageData) {
     const subjectText = `${process.env.APP_NODE_CONTACT_US_SUBJECT} ${(messageData.subject)}`
-    const mailText = `${APP_NODE_CONTACT_US_MESSAGE_BODY_SENDER_NAME_TEXT} ${messageData.name} 
-        \n ${APP_NODE_CONTACT_US_MESSAGE_BODY_SENDER_PHONE_TEXT} ${messageData.phone}
-        \n ${APP_NODE_CONTACT_US_MESSAGE_BODY_SENDER_EMAIL_TEXT} ${messageData.email} 
-        \n ${APP_NODE_CONTACT_US_MESSAGE_TEXT} ${messageData.message}`
+    const mailText = `${process.env.APP_NODE_CONTACT_US_MESSAGE_BODY_SENDER_NAME_TEXT} ${messageData.name} 
+        \n ${process.env.APP_NODE_CONTACT_US_MESSAGE_BODY_SENDER_PHONE_TEXT} ${messageData.phone}
+        \n ${process.env.APP_NODE_CONTACT_US_MESSAGE_BODY_SENDER_EMAIL_TEXT} ${messageData.email} 
+        \n ${process.env.APP_NODE_CONTACT_US_MESSAGE_TEXT} ${messageData.message}`
 
     const mailOptions = {
         from: `"${messageData.name}" <${messageData.email}>`,

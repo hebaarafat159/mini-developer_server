@@ -26,7 +26,7 @@ function sendRegistrationEmail(registration) {
         \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_EMAIL_TEXT} ${registration.parentObj.email} 
         \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_MOBILE_TEXT} ${registration.parentObj.mobile} 
         \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_CHILD_AGE_TEXT} ${registration.studentObj.age}
-        \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_HAS_COMPUTER_TEXT} ${(registration.studentObj.hasComputer) ? 'Yes' : 'No'} 
+        \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_HAS_COMPUTER_TEXT} ${(registration.studentObj.has_computer) ? 'Yes' : 'No'} 
         \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_HAS_LESSONS_BEFORE_TEXT} ${(registration.studentObj.has_lessons_before) ? 'Yes' : 'No'} 
         \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_PROGRAM_TYPE_TEXT} ${registration.program_type}
         ${(registration.program_type && registration.program_type === 'In Person') ? `\n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_REGION_TEXT} ${registration.regionObj.name}` : ''}

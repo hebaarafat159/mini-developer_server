@@ -69,6 +69,8 @@ async function addStudent(student, parentObject) {
                 if (updatedObject !== null) studentObject['slug'] = slug
             }
             // console.log(`Add STudent Object: ${studentObject}`);
+        } else {
+            update(studentObject._id, student)
         }
 
     } catch (error) {
@@ -90,32 +92,53 @@ async function saveStudent(req, res) {
         res.send(retrunResponse(error.code, null, error.name));
     }
 }
+async function update(id, student) {
+    const studentObj = await Student.findOneAndUpdate({ "_id": id }, {
+        'first_name': student.first_name,
+        'last_name': student.last_name,
+        'age': student.age,
+        'has_computer': student.has_computer,
+        'has_lessons_before': student.has_lessons_before,
+        'mobile': student.mobile,
+        'is_social_allowed': student.is_social_allowed,
+        'is_local_allowed': student.is_local_allowed,
+        'medical_condition': student.medical_condition,
+        'emergency_contact_name': student.emergency_contact_name,
+        'emergency_contact_phone_number': student.emergency_contact_phone_number,
+        'comment': student.comment,
+        'lastLoginTime': new Date().getTime()
+    })
+    // console.log(`Update STudent: ${JSON.stringify(studentObj)}`);
+    return await studentObj.save();
+}
 
 async function updateStudent(req, res) {
     try {
-        const studentObj = await Student.findOneAndUpdate({ "_id": req.params.id }, {
-            'first_name': req.body.first_name,
-            'last_name': req.body.last_name,
-            'age': req.body.age,
-            'has_computer': req.body.hasComputer,
-            'has_lessons_before': req.body.has_lessons_before,
-            'mobile': req.body.mobile,
-            'is_social_allowed': req.body.is_social_allowed,
-            'is_local_allowed': req.body.is_local_allowed,
-            'medical_condition': req.body.medical_condition,
-            'emergency_contact_name': req.body.emergency_contact_name,
-            'emergency_contact_phone_number': req.body.emergency_contact_phone_number,
-            'comment': req.body.comment,
-            'lastLoginTime': new Date().getTime()
-        })
-        // console.log(`Update STudent: ${JSON.stringify(studentObj)}`);
-        await studentObj.save();
+        const studentObj = update(req.params.id, req.body)
+        // await Student.findOneAndUpdate({ "_id": req.params.id }, {
+        //     'first_name': req.body.first_name,
+        //     'last_name': req.body.last_name,
+        //     'age': req.body.age,
+        //     'has_computer': req.body.hasComputer,
+        //     'has_lessons_before': req.body.has_lessons_before,
+        //     'mobile': req.body.mobile,
+        //     'is_social_allowed': req.body.is_social_allowed,
+        //     'is_local_allowed': req.body.is_local_allowed,
+        //     'medical_condition': req.body.medical_condition,
+        //     'emergency_contact_name': req.body.emergency_contact_name,
+        //     'emergency_contact_phone_number': req.body.emergency_contact_phone_number,
+        //     'comment': req.body.comment,
+        //     'lastLoginTime': new Date().getTime()
+        // })
+        // // console.log(`Update STudent: ${JSON.stringify(studentObj)}`);
+        // await studentObj.save();
         res.send(retrunResponse(200, studentObj, ""));
     } catch (error) {
         console.log("Error" + error);
         res.send(retrunResponse(error.code, null, error.name));
     }
 }
+
 
 async function getStudents(req, res) {
     try {

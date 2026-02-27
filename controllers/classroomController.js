@@ -62,55 +62,80 @@ async function register(req, res) {
 
                 // save or update requests bject
                 if (students && students.length > 0) {
-                    // add generale data in each request object for each student
-                    let requestObject = {
+
+                    // build base request object once
+                    let baseRequestObject = {
                         parentObj: parent,
                         program_type: req.body.program_type,
                         other_region: req.body.other_region
-                    }
+                    };
 
-                    // get region object from database
+                    // region
                     if (req.body.region !== null) {
-                        let regionObject = await locationController.getRegionById(req.body.region._id)
-                        requestObject = { ...requestObject, regionObj: regionObject }
+                        const regionObject = await locationController.getRegionById(req.body.region._id);
+                        baseRequestObject = { ...baseRequestObject, regionObj: regionObject };
                     }
 
-                    // get course object from database, in case of course id exists
+                    // course
                     if (req.body.course !== null) {
-                        let courseObject = await courseController.getCourseById(req.body.course._id)
-                        requestObject = { ...requestObject, courseObj: courseObject }
+                        const courseObject = await courseController.getCourseById(req.body.course._id);
+                        baseRequestObject = { ...baseRequestObject, courseObj: courseObject };
                     }
 
-                    // get classroom object
+                    // classroom
                     if (req.body.classroom !== null) {
-                        let classroomObject = await Classroom.findById({ "_id": req.body.classroom._id }).populate('place_id')
-                        requestObject = { ...requestObject, classroomObj: classroomObject }
+                        const classroomObject = await Classroom
+                            .findById(req.body.classroom._id)
+                            .populate('place_id');
+
+                        baseRequestObject = { ...baseRequestObject, classroomObj: classroomObject };
                     }
 
-                    // save each students' requests 
-                    const registerations = await Promise.all(students.map(async (student, index) => {
-                        console.log(`Student : ${student}`)
-                        // add course level to request object
-                        if (student.course_level !== null && student.course_level !== '') {
-                            let leveObject = await courseController.getCourseById(req.body.children[index].course_level._id)
-                            requestObject = { ...requestObject, leveObject: leveObject }
-                            console.log(`level_id ID : ${JSON.stringify(requestObject)}`)
-                        }
+                    // save each student registration
+                    const registrations = await Promise.all(
+                        students.map(async (student, index) => {
 
-                        // add student to request object
-                        requestObject = { ...requestObject, studentObj: student }
-                        const registration = await saveRegistration(requestObject)
-                        if (registration !== null) {
-                            console.log(`Registeration object : ${JSON.stringify(requestObject)}`)
-                            mailServer.sendRegistrationEmail(requestObject)
-                            return registration;
-                        }
-                    }))
-                    console.log(`Registerations : ${registerations.length}`)
-                    if (registerations && registerations.length > 0)
-                        res.send(retrunResponse(200, registerations, ""));
+                            console.log(`Student : ${student}`);
+
+                            // 🔹 Create a NEW request object per student
+                            let requestObject = {
+                                ...baseRequestObject,
+                                studentObj: student
+                            };
+
+                            // add level if exists
+                            if (student.course_level) {
+                                const levelObject = await courseController.getCourseById(
+                                    req.body.children[index].course_level._id
+                                );
+
+                                requestObject = {
+                                    ...requestObject,
+                                    levelObject: levelObject
+                                };
+                            }
+
+                            console.log(`Registration object : ${JSON.stringify(requestObject)}`);
+
+                            const registration = await saveRegistration(requestObject);
+
+                            if (registration) {
+                                await mailServer.sendRegistrationEmail(requestObject);
+                                return registration;
+                            }
+
+                            return null;
+                        })
+                    );
+
+                    const filteredRegistrations = registrations.filter(Boolean);
+
+                    console.log(`Registrations : ${filteredRegistrations.length}`);
+
+                    if (filteredRegistrations.length > 0)
+                        res.send(retrunResponse(200, filteredRegistrations, ""));
                     else
-                        res.send(retrunResponse(400, null, "We Couldn't save your registration, please try again later "));
+                        res.send(retrunResponse(400, null, "We couldn't save your registration, please try again later"));
                 }
             }
         }

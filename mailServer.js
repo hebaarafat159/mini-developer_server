@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-function sendRegistrationEmail(registration) {
+async function sendRegistrationEmail(registration) {
     const subjectText = `${process.env.APP_NODE_EMAIL_MESSAGE_SUBJECT} ${registration.studentObj.first_name} ${registration.studentObj.last_name} ${(registration.courseObj) ? registration.courseObj.title : 'New Registration'}`
     const mailText = `
         \n ${process.env.APP_NODE_EMAIL_MESSAGE_BODY_CHILD_TEXT} ${registration.studentObj.first_name} ${registration.studentObj.last_name} 
